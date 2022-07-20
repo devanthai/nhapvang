@@ -1,0 +1,372 @@
+<div class="phdr" style="margin-top: 0px;"><strong>Rút tiền</strong></div>
+<style>
+    .thanhcong {
+        background-color: #00ff1f59;
+    }
+
+    .thatbai {
+
+
+
+        background-color: #ffc5c5;
+    }
+
+    .waiting {
+        background-color: #ff990059;
+    }
+
+    .disabled {
+        position: relative;
+        color: grey;
+        background-color: #e5e5e5;
+    }
+</style>
+<div class="panel-body">
+    <label>Chọn kiểu rút:</label>
+    <select name="typerut" id="typerut">
+        <option disabled="" selected="selected" value="">Vui lòng chọn</option>
+        <option value="1">Momo (x<%-giavang%>)</option>
+        <option value="2">TheSieuRe.Com (x<%-giavang%>)</option>
+        <option value="3">The9sao.Com (x<%-giavang%>)</option>
+     
+        <option value="4">Ngân hàng (x<%-giavang%>)</option>
+        <!-- <option value="3">Thẻ cào (Tự động 2 giây)</option> -->
+    </select>
+    <div id="type1" style="display: none;">
+        <label>Số vàng muốn rút:</label>
+        <input type="text" class="fmod" name="sovang" id="sovangrutmm" value="">
+        <label>Số tiền sẽ nhận được:</label>
+        <input style="pointer-events:none;" type="text" class="fmod disabled" name="moneyrecive" id="moneyrecive"
+            value="">
+        <label>SĐT ví Momo:</label>
+        <input type="text" class="fmod" name="sdtmm" id="sdtmm" value="">
+        <label>Xác thực captcha:</label>
+
+
+
+    </div>
+    <div id="type2" style="display: none;">
+        <label>Số vàng muốn rút:</label>
+        <input type="text" class="fmod" name="sovang" id="sovangruttsr" value="">
+        <label>Số tiền sẽ nhận được:</label>
+        <input style="pointer-events:none;" type="text" class="fmod disabled" name="moneyrecive" id="moneyrecive"
+            value="">
+        <label>Tài khoản TheSieuRe:</label>
+        <input type="text" class="fmod" name="sdttsr" id="sdttsr" value="">
+        <label>Xác thực captcha:</label>
+
+
+
+    </div>
+    <div id="type3" style="display: none;">
+        <label>Số vàng muốn rút:</label>
+        <input type="text" class="fmod" name="sovang" id="sovangthe9sao" value="">
+        <label>Số tiền sẽ nhận được:</label>
+        <input style="pointer-events:none;" type="text" class="fmod disabled" name="moneyrecive" id="moneyrecive"
+            value="">
+        <label>Tài khoản The9sao:</label>
+        <input type="text" class="fmod" name="sdtt9s" id="sdtt9s" value="">
+        <label>Xác thực captcha:</label>
+
+
+
+    </div>
+    <div id="type4" style="display: none;">
+        <label>Số vàng muốn rút:</label>
+        <input type="text" class="fmod" name="sovang" id="sovangbank" value="">
+        <label>Số tiền sẽ nhận được:</label>
+        <input style="pointer-events:none;" type="text" class="fmod disabled" name="moneyrecive" id="moneyrecive"
+            value="">
+
+        <label>Ngân hàng:</label>
+
+        <select name="typebank" id="typebank">
+            <option disabled="" selected="selected" value="">Vui lòng chọn</option>
+            <option value="">--- Chọn ngân hàng---</option>
+
+            <option value="BIDV">BIDV - NH DAU TU VA PHAT TRIEN VIET NAM</option>
+
+            <option value="MB">MB - NH TMCP QUAN DOI</option>
+
+            <option value="AGR">AGRIBANK - NH NÔNG NGHIỆP PHÁT TRIỂN NT VIET NAM</option>
+
+            <option value="ACB">ACB - NH TMCP A CHAU</option>
+
+            <option value="SACOMBANK">SACOMBANK - NH TMCP SAI GON THUONG TIN</option>
+
+            <option value="VIETCOMBANK">VIETCOMBANK -NH TMCP NGOAI THUONG VIET NAM (VCB)
+            </option>
+
+            <option value="TECHCOMBANK">TECHCOMBANK - NH TMCP KY THUONG VIET NAM (TCB)</option>
+
+            <option value="DONGA">DONGABANK -NH TMCP DONG A (EAB)</option>
+
+            <option value="VIETINBANK">VIETINBANK - NH TMCP CONG THUONG VIET NAM</option>
+
+            <option value="VPBANK">VPBANK - NH TMCP VIET NAM THINH VUONG</option>
+
+            <option value="TPBANK">TPBANK - NH TMCP TIEN PHONG</option>
+
+            <option value="MSB">MSB - Ngân Hàng TMCP Hàng Hải Việt Nam</option>
+
+            <option value="EXB">EXIMBANK - NH TMCP XUAT NHAP KHAU VIET NAM (EIB)</option>
+
+            <option value="SEA">SEABANK - NH TMCP DONG NAM A (TỰ ĐỘNG)</option>
+
+            <option value="HDB">HDBANK - NH TMCP PHAT TRIEN TP.HCM</option>
+
+            <option value="VIB">VIB - NH TMCP QUOC TE VIET NAM ((DUYỆT 5 GIÂY))</option>
+
+            <option value="OCE">OCEANBANK - NH TMCP DAI DUONG (OJB)</option>
+
+            <option value="SHB">SHB - NH TMCP SAI GON HA NOI</option>
+        </select>
+
+        <label>Số tài khoản:</label>
+        <input type="text" class="fmod" name="stkbank" id="stkbank" value="">
+
+        <label>Xác thực captcha:</label>
+
+
+
+    </div>
+    <div id="subbbomittt" style="display: none;">
+        <div class="g-recaptcha" data-sitekey="6LeL2OQcAAAAAEIIAiWI7DMyniXwnInm6aGSzTBT"></div>
+        <div id="thongbao"></div>
+        <button class="btn btn-block btn-warning" style="border-color: #ffffff;" type="submit" id="idruttien"
+            name="submit" onclick="ruttien();">Rút ngay</button>
+
+    </div>
+
+</div>
+<div class="phdr" style="margin-top: 0px;"><strong>Lịch sử rút tiền</strong></div>
+<div class="panel-body">
+    <div id="lichsu">
+        <%-lichsurut%>
+    </div>
+</div>
+<script>
+    var gia = '<%-giavang%>'
+
+    hideall = (value) => {
+        for (let i = 1; i <= 4; i++) {
+            if (i != value) {
+                $("#type" + i).css("display", "none");
+            }
+            else {
+                $("#type" + i).css("display", "block");
+            }
+        }
+    }
+    $('#typerut').on('change', function () {
+        $("#subbbomittt").css("display", "block");
+
+
+        hideall(this.value)
+
+
+    });
+    $('[name=sovang]').on("keyup", function (event) {
+
+        var selection = window.getSelection().toString();
+        if (selection !== '') {
+            return;
+        }
+        if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+            return;
+        }
+        var $this = $(this);
+        var input = $this.val();
+        var input = input.replace(/[\D\s\._\-]+/g, "");
+
+        var moneyrecive = input / gia
+        if (moneyrecive > 0) {
+            $('[id=moneyrecive]').val(numberWithCommas(Math.round(moneyrecive)) + " VNĐ");
+        }
+        input = input ? parseInt(input, 10) : 0;
+        $this.val(function () {
+            return (input === 0) ? "" : input.toLocaleString("en-US");
+        });
+    });
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    async function checkNameMM(sdt) {
+        return new Promise(resolve => {
+            try {
+                $.ajax({
+                    url: '/ruttien/getNamemm',
+                    type: "POST",
+                    dataType: "text",
+                    data: { 'sdt': sdt },
+                    success: function (res) {
+                        return resolve(res)
+                    }
+                });
+            } catch {
+                return resolve({ err: 1, message: "Có lỗi đã xảy ra vui lòng thử lại" })
+            }
+        })
+    }
+    async function checkNameTsr(sdt) {
+        return new Promise(resolve => {
+            try {
+                $.ajax({
+                    url: '/ruttien/getNameTsr',
+                    type: "POST",
+                    dataType: "text",
+                    data: { 'sdt': sdt },
+                    success: function (res) {
+                        return resolve(res)
+                    }
+                });
+            } catch {
+                return resolve({ err: 1, message: "Có lỗi đã xảy ra vui lòng thử lại" })
+            }
+        })
+    }
+    ruttien = async () => {
+        if ($("#idruttien").text() == "Đang xác minh") {
+            return
+        }
+        $("#idruttien").text("Đang xác minh")
+        var stk = $('#sdtmm').val()
+        var type = $('#typerut').val()
+        var typebank = $('#typebank').val()
+        var sovangrut = 0
+        var taikhoanck = 0
+
+
+        if (type == 1) {
+            taikhoanck = stk
+            sovangrut = $('#sovangrutmm').val()
+        }
+        else if (type == 2) {
+            sovangrut = $('#sovangruttsr').val();
+            taikhoanck = $('#sdttsr').val()
+        }
+        else if (type == 3) {
+            sovangrut = $('#sovangthe9sao').val();
+            taikhoanck = $('#sdtt9s').val()
+        }
+        else if (type == 4) {
+            sovangrut = $('#sovangbank').val();
+            taikhoanck = $('#stkbank').val()
+        }
+
+        if (taikhoanck == "" || taikhoanck.length < 3) {
+            thongbao("Vui lòng kiểm tra lại tài khoản nhận tiền")
+            $("#idruttien").text("Rút ngay")
+
+            return
+        }
+        if (type == 1) {
+            var statusmm = await checkNameMM(stk)
+            statusmm = JSON.parse(statusmm)
+            if (statusmm.err == 1) {
+                alert(statusmm.message)
+                $("#idruttien").text("Rút ngay")
+                return
+            }
+
+
+            if (!confirm("Momo này có phải của bạn không?\n" + " - SDT: " + stk + "\n - Tên: " + statusmm.message + '\nNếu đúng thông tin bạn hãy ấn ok')) {
+                $("#idruttien").text("Rút ngay")
+                return;
+            }
+
+        }
+        else if (type == 2) {
+            // var statusmm = await checkNameTsr(taikhoanck)
+            // statusmm = JSON.parse(statusmm)
+            // if (statusmm.err == 1) {
+            //     alert(statusmm.message)
+            //     $("#idruttien").text("Rút ngay")
+            //     return
+            // }
+            // if (statusmm.message == undefined) {
+            //     alert("Kiểm tra lại tài khoản TSR hoặc thử lại sau")
+            //     $("#idruttien").text("Rút ngay")
+            //     return
+            // }
+            // if (!confirm("Tên Tsr này có phải của bạn không?\n" + " - TK: " + taikhoanck + "\n - Tên: " + statusmm.message + '\nNếu đúng thông tin bạn hãy ấn ok')) {
+            //     $("#idruttien").text("Rút ngay")
+            //     return;
+            // }
+
+            if (!confirm("Tk Tsr này có phải của bạn không?\n" + " - TK: " + taikhoanck + '\nNếu đúng thông tin bạn hãy ấn ok')) {
+                $("#idruttien").text("Rút ngay")
+                return;
+            }
+        }
+        else if (type == 3) {
+
+            if (!confirm("Bạn có muốn rút qua the9sao với tài khoản " + taikhoanck)) {
+                $("#idruttien").text("Rút ngay")
+                return;
+            }
+        }
+        else if (type == 4) {
+
+            if (!confirm("Bạn có muốn rút qua Ngân hàng với tài khoản " + taikhoanck)) {
+                $("#idruttien").text("Rút ngay")
+                return;
+            }
+        }
+        var captchars = document.getElementById("g-recaptcha-response").value
+        if (captchars == '') {
+            thongbao("Vui lòng xác nhận captcha")
+            $("#idruttien").text("Rút ngay")
+            return
+        }
+
+
+
+        if (sovangrut <= 0) {
+            thongbao("Vui lòng kiểm tra số vàng")
+            $("#idruttien").text("Rút ngay")
+            return
+        }
+        $.ajax({
+            url: '/ruttien',
+            type: "POST",
+            dataType: "text",
+            data: { 'g-recaptcha-response': captchars, type: type, sovangrut: sovangrut, taikhoanck: taikhoanck, typebank: typebank },
+            beforeSend: function () {
+                $("#thongbao").html("")
+
+                grecaptcha.reset();
+            },
+            success: function (res) {
+                $("#idruttien").text("Rút ngay")
+                json = JSON.parse(res)
+                getls()
+                thongbao(json.message)
+            }
+        });
+
+    }
+    setInterval(() => {
+        getls()
+    }, 5000)
+    function getls() {
+        $.ajax({
+            url: '/ruttien/getls',
+            type: "GET",
+            dataType: "text",
+            success: function (res) {
+                $("#lichsu").html(res)
+            }
+        });
+    }
+    function thongbao(msg) {
+        $("#thongbao").html('<div class="rmenu"><b>' + msg + '</b></div>')
+    }
+</script>
+<script type="text/javascript">
+    var onloadCallback = function () {
+
+    };
+</script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer>
+</script>

@@ -1,0 +1,113 @@
+<div class="phdr" style="margin-top: 0px;"><strong>Nạp Thỏi Vàng</strong></div>
+<style>
+    .thanhcong {
+        background-color: #00ff1f59;
+    }
+
+    .waiting {
+        background-color: #ff990059;
+    }
+</style>
+<div class="panel-body">
+
+    <div class="rmenu">- Tài khoản bạn Sv<%-data.server%> (Bạn chỉ có thể nạp thỏi ở Sv<%-data.server%>)</div>
+    <label>Tên Nhân Vật:</label>
+    <input type="text" class="fmod" name="tnv" id="tnv" value="">
+    <label>Số thỏi cần nạp:</label>
+    <input type="number" min="1" max="99" maxlength="2" class="fmod" name="sothoi" id="sothoi">
+    <label>Số vàng nhận được:</label>
+    <b style="color: red;"><span name="sovangnhan" id="sovangnhan">0</span></b>
+
+
+
+
+    <br>
+    <div id="thongbao"></div>
+    <input class="btn btn-block btn-warning" style="border-color: #ffffff;" type="submit" name="submit"
+        onclick="taodonnap();" value="Tạo đơn nạp">
+</div>
+
+<phdr style="margin-top: 0px;" class="phdr">Nhân vật Nạp Thỏi Vàng</phdr>
+<div class="panel-body">
+    <%-bot%>
+
+</div>
+<div class="phdr" style="margin-top: 0px;"><strong>Lịch sử nạp Thỏi Vàng</strong></div>
+<div class="panel-body">
+    <div id="lichsu">
+        <%-lichsu%>
+    </div>
+
+</div>
+<script>
+
+
+    var golds = $("#sothoi");
+    golds.keyup(function () {
+        $("#sovangnhan").text(formatNumber(golds.val() * 37000000));
+    });
+
+    function formatNumber(number) {
+        var amount = number.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+        });
+        return amount.replace("$", "").replace(".00", "");
+    }
+
+
+    taodonnap = () => {
+        $("#thongbao").val("")
+        var vangnap = $("#sothoi").val()
+        var tnv = $("#tnv").val()
+        $.ajax({
+            url: '/napthoi',
+            type: "POST",
+            dataType: "text",
+            data: { vangnap: vangnap, tnv: tnv },
+            success: function (res) {
+                var json = JSON.parse(res)
+                if (json.err == 1) {
+                    thongbao(json.message)
+                }
+                else {
+                    thongbao(json.message)
+                }
+                getls()
+            }
+        });
+    }
+    setInterval(() => {
+        getls()
+    }, 5000)
+    function thongbao(msg) {
+        $("#thongbao").html('<div class="rmenu"><b>' + msg + '</b></div>')
+    }
+    function getls() {
+
+        $.ajax({
+            url: '/napthoi/getls',
+            type: "GET",
+            dataType: "text",
+
+            success: function (res) {
+
+                $("#lichsu").html(res)
+            }
+        });
+
+    }
+    function huydon(id) {
+
+        $.ajax({
+            url: '/napthoi/huydon',
+            type: "POST",
+            dataType: "text",
+            data: { id: id },
+            success: function (res) {
+                getls()
+            }
+        });
+
+    }
+</script>

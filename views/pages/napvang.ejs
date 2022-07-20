@@ -1,0 +1,139 @@
+<div class="phdr" style="margin-top: 0px;"><strong>Nạp vàng</strong></div>
+<style>
+    .thanhcong {
+        background-color: #00ff1f59;
+    }
+
+    .waiting {
+        background-color: #ff990059;
+    }
+</style>
+<div class="panel-body">
+
+    <div class="rmenu">- Tài khoản bạn Sv<%-data.server%> (Bạn chỉ có thể nạp vàng ở Sv<%-data.server%>)</div>
+    <label>Tên Nhân Vật:</label>
+    <input type="text" class="fmod" name="tnv" id="tnv" value="">
+    <label>Số vàng cần nạp:</label>
+    <select name="vang" id="vang">
+        <option disabled="" selected="selected" value="">Vui lòng chọn</option>
+        <option value="1">10 triệu vàng</option>
+        <option value="2">20 triệu vàng</option>
+        <option value="3">50 triệu vàng</option>
+        <option value="4">100 triệu vàng</option>
+        <option value="5">200 triệu vàng</option>
+        <option value="6">500 triệu vàng</option>
+        <option value="7">Tự nhập số vàng</option>
+
+    </select>
+    <div id="inputnhap" style="display: none;">
+        <label>Số vàng tự nhập:</label>
+        <input type="text" class="fmod" name="vangnhap" id="vangnhap" value="">
+    </div>
+
+    <br>
+    <div id="thongbao"></div>
+    <input class="btn btn-block btn-warning" style="border-color: #ffffff;" type="submit" name="submit"
+        onclick="taodonnap();" value="Tạo đơn nạp">
+</div>
+
+<phdr style="margin-top: 0px;" class="phdr">Nhân vật Nạp Vàng</phdr>
+<div class="panel-body">
+    <%-bot%>
+
+</div>
+<div class="phdr" style="margin-top: 0px;"><strong>Lịch sử nạp vàng</strong></div>
+<div class="panel-body">
+    <div id="lichsu">
+        <%-lichsu%>
+    </div>
+
+</div>
+<script>
+    $("#vang").change(function () {
+        if ($("#vang").val() == 7) {
+            $("#inputnhap").css("display", "block");
+        }
+        else {
+            $("#inputnhap").css("display", "none");
+        }
+    });
+
+    $("#vangnhap").on("keyup", function (event) {
+        
+        var selection = window.getSelection().toString();
+        if (selection !== '') {
+            return;
+        }
+        if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+            return;
+        }
+        var $this = $(this);
+        var input = $this.val();
+        var input = input.replace(/[\D\s\._\-]+/g, "");
+        input = input ? parseInt(input, 10) : 0;
+        $this.val(function () {
+            return (input === 0) ? "" : input.toLocaleString("en-US");
+        });
+    });
+    taodonnap = () => {
+        $("#thongbao").val("")
+        var vangnap = $("#vang").val()
+        var tnv = $("#tnv").val()
+        var vangnhap = $("#vangnhap").val()
+        if (!isNaN(vangnap) && vangnap > 0 && vangnap < 8 && tnv != "") {
+            $.ajax({
+                url: '/napvang',
+                type: "POST",
+                dataType: "text",
+                data: { vangnap: vangnap, tnv: tnv, vangnhap: vangnhap },
+                success: function (res) {
+                    var json = JSON.parse(res)
+                    if (json.err == 1) {
+                        thongbao(json.message)
+                    }
+                    else {
+                        thongbao(json.message)
+                    }
+                    getls()
+                }
+            });
+        }
+        else {
+            thongbao("Vui lòng kiểm tra lại thông tin")
+        }
+
+    }
+    setInterval(() => {
+        getls()
+    }, 5000)
+    function thongbao(msg) {
+        $("#thongbao").html('<div class="rmenu"><b>' + msg + '</b></div>')
+    }
+    function getls() {
+
+        $.ajax({
+            url: '/napvang/getls',
+            type: "GET",
+            dataType: "text",
+
+            success: function (res) {
+
+                $("#lichsu").html(res)
+            }
+        });
+
+    }
+    function huydon(id) {
+
+        $.ajax({
+            url: '/napvang/huydon',
+            type: "POST",
+            dataType: "text",
+            data: { id: id },
+            success: function (res) {
+                getls()
+            }
+        });
+
+    }
+</script>

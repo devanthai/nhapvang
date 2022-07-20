@@ -1,0 +1,43 @@
+<div class="phdr" style="margin-top: 0px;"><strong>Thông báo</strong></div>
+<div class="list1"><img src="/images/hot.jpg?up=3" title="*" alt="*"> Giá nhập vàng ngày <em><%-new Date().toLocaleString();%></em>: <br>Server 1: <span
+        style="color:#b56d09"><i>x<%-setting.giavang.sv1%></i></span>, Server 2: <span style="color:#b56d09"><i>x<%-setting.giavang.sv2%></i></span>, Server 3:
+    <span style="color:#b56d09"><i>x<%-setting.giavang.sv3%></i></span>, Server 4: <span style="color:#b56d09"><i>x<%-setting.giavang.sv4%></i></span>, Server
+    5: <span style="color:#b56d09"><i>x<%-setting.giavang.sv5%></i></span>, Server 6: <span style="color:#b56d09"><i>x<%-setting.giavang.sv6%></i></span>,
+    Server 7: <span style="color:#b56d09"><i>x<%-setting.giavang.sv7%></i></span>, Server 8: <span
+        style="color:#b56d09"><i>x<%-setting.giavang.sv8%></i></span>, Server 9: <span style="color:#b56d09"><i>x<%-setting.giavang.sv9%></i></span></div>
+
+
+
+
+
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="display: none;">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header text-center">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                      aria-hidden="true">×</span></button>
+                  <h4 class="modal-title">THÔNG BÁO</h4>
+                </div>
+                <div class="modal-body">
+          
+                  <%-setting.thongbao%>
+          
+          
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <script>
+            $("#myModal").ready(function(){
+              $("#myModal").modal()
+          });
+           
+</script>
+
+
+

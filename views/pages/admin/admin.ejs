@@ -1,0 +1,415 @@
+<script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+
+<style>
+    .thanhcong {
+        background-color: #00ff1f59;
+    }
+
+    .thatbai {
+
+
+
+        background-color: #ffc5c5;
+    }
+
+    .waiting {
+        background-color: #ff990059;
+    }
+
+    .disabled {
+        position: relative;
+        color: grey;
+        background-color: #e5e5e5;
+    }
+</style>
+<button data-toggle="modal" data-target="#myModal">Sửa thông báo</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="display: none;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">×</span></button>
+          <h4 class="modal-title">THÔNG BÁO</h4>
+        </div>
+        <div class="modal-body" id="editor">
+  
+
+          <%-setting.thongbao%>
+  
+  
+        </div>
+<button onclick="saveThongBao()">Save Thông báo</button>
+
+        <div class="modal-footer">
+          <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<br>
+
+
+<script>
+    
+CKEDITOR.replace('editor', {
+    height: 400,
+    baseFloatZIndex: 10005,
+    removeButtons: 'PasteFromWord'
+});
+saveThongBao=()=>{
+        $.ajax({
+            url: '/admin/saveThongbao',
+            type: "POST",
+            dataType: "text",
+            data: {
+                thongbao: CKEDITOR.instances['editor'].getData(),
+            },
+            success: function (res) {
+        
+                    alert(res)
+                
+            }
+        });
+    }
+</script>
+
+
+
+link bank auto 
+<input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo" >
+<button onclick="saveBankAuto()">lưu</button>
+<br>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalck">
+    Chỉnh giá vàng
+</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalcongtien">
+    Cộng vàng User
+</button>
+
+<button data-toggle="modal" data-target="#modalthongke">Thống kê</button>
+<br>
+Tên
+<input id="tnvtuycap" type="text">
+<button onclick="truycapname()">Truy cap</button>
+<script>
+    saveBankAuto=()=>{
+        $.ajax({
+            url: '/admin/saveBankAuto',
+            type: "POST",
+            dataType: "text",
+            data: {
+                linkMomo: $("#linkMomo").val(),
+            },
+            success: function (res) {
+        
+                    alert(res)
+                
+            }
+        });
+    }
+    truycapname = () => {
+        $.ajax({
+            url: '/admin/truycap',
+            type: "POST",
+            dataType: "text",
+            data: {
+                tnv: $("#tnvtuycap").val(),
+
+            },
+            success: function (res) {
+                // alert(res);
+                if (!res.includes("ko tim thay")) {
+                    location.href = "/admin/truycap?id=" + res
+                }
+                else {
+                    alert(res)
+                }
+            }
+        });
+    }
+</script>
+
+<div class="modal fade" id="modalthongke" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Thống kê</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="" class="modal-body">
+
+                <%-ruttien%>
+                    <br>
+                    <%-rutthang%>
+                    <br>
+
+                    <%-napvang%>
+
+                    <br>
+                    <%-napthang%>
+                    <br>
+
+                    <%-htmlNapThoi%>
+                    <br>
+
+                    <%-htmlThoithang%>
+                       
+            </div>
+            <div class="modal-footer">
+            
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modalck" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Giá vàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="viewck" class="modal-body">
+                <span>Sv1: </span> <input id="cksv1" value="<%-setting.giavang.sv1%>" type="number">
+                <br>
+                <span>Sv2: </span> <input id="cksv2" value="<%-setting.giavang.sv2%>" type="number"> <br>
+                <span>Sv3: </span> <input id="cksv3" value="<%-setting.giavang.sv3%>" type="number"> <br>
+                <span>Sv4: </span> <input id="cksv4" value="<%-setting.giavang.sv4%>" type="number"> <br>
+                <span>Sv5: </span> <input id="cksv5" value="<%-setting.giavang.sv5%>" type="number"> <br>
+                <span>Sv6: </span> <input id="cksv6" value="<%-setting.giavang.sv6%>" type="number"> <br>
+                <span>Sv7: </span> <input id="cksv7" value="<%-setting.giavang.sv7%>" type="number"> <br>
+                <span>Sv8: </span> <input id="cksv8" value="<%-setting.giavang.sv8%>" type="number"> <br>
+                <span>Sv9: </span> <input id="cksv9" value="<%-setting.giavang.sv9%>" type="number">
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="save()" class="btn btn-secondary" data-dismiss="modal">Lưu lại</button>
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalcongtien" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Cộng vàng thành viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="viewck" class="modal-body">
+                <span>Tài khoản: </span> <input id="usernameup" type="text">
+                <br>
+                <span>Số vàng: </span> <input id="goldup" type="text">
+                <br>
+                <button onclick="congvang()" type="button" class="btn btn-primary">
+                    Cộng ngay
+                </button>
+
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="viewls" class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<%-lsruttien%>
+
+    <script>
+        $("#goldup").on("keyup", function (event) {
+
+            var selection = window.getSelection().toString();
+            if (selection !== '') {
+                return;
+            }
+            if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                return;
+            }
+            var $this = $(this);
+            var input = $this.val();
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt(input, 10) : 0;
+            $this.val(function () {
+                return (input === 0) ? "" : input.toLocaleString("en-US");
+            });
+        });
+        congvang = () => {
+            if (!confirm("Bạn có muốn ấn ok không?")) {
+                return
+            }
+
+            $.ajax({
+                url: '/admin/congvang',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    username: $("#usernameup").val(),
+                    gold: $("#goldup").val()
+
+                },
+                success: function (res) {
+                    alert(res);
+
+                    if (res.includes("thành công")) {
+                        $("#modalcongtien").modal("hide")
+                    }
+
+                }
+            });
+        }
+        function save() {
+
+            $.ajax({
+                url: '/admin/savesetting',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    sv1: $("#cksv1").val(),
+                    sv2: $("#cksv2").val(),
+                    sv3: $("#cksv3").val(),
+                    sv4: $("#cksv4").val(),
+                    sv5: $("#cksv5").val(),
+                    sv6: $("#cksv6").val(),
+                    sv7: $("#cksv7").val(),
+                    sv8: $("#cksv8").val(),
+                    sv9: $("#cksv9").val(),
+
+                },
+                success: function (res) {
+                    alert(res);
+
+                }
+            });
+        }
+        function xoa(_id) {
+            if (!confirm("Bạn có muốn XÓA không?")) {
+                return
+            }
+            $.ajax({
+                url: '/admin/removeruttien',
+                type: "POST",
+                dataType: "text",
+                data: { '_id': _id },
+                success: function (res) {
+                    alert(res);
+                    location.reload();
+                }
+            });
+        }
+        function thanhcong(_id) {
+            if (!confirm("Bạn có chắc?")) {
+                return
+            }
+            $.ajax({
+                url: '/admin/thanhcongruttien',
+                type: "POST",
+                dataType: "text",
+                data: { '_id': _id },
+                success: function (res) {
+                    alert(res);
+                    location.reload();
+                }
+            });
+        }
+        function thatbai(_id) {
+            if (!confirm("Bạn có chắc?")) {
+                return
+            }
+            $.ajax({
+                url: '/admin/thatbairuttien',
+                type: "POST",
+                dataType: "text",
+                data: { '_id': _id },
+                success: function (res) {
+                    alert(res);
+                    location.reload();
+                }
+            });
+        }
+        function napthoi(uid) {
+            $("#exampleModalCenter").modal()
+            $.ajax({
+                url: '/admin/napthoiuser',
+                type: "POST",
+                dataType: "text",
+                data: { 'uid': uid },
+                success: function (res) {
+                    $("#viewls").html(res)
+                }
+            });
+        }
+        function napvang(uid) {
+            $("#exampleModalCenter").modal()
+            $.ajax({
+                url: '/admin/napvanguser',
+                type: "POST",
+                dataType: "text",
+                data: { 'uid': uid },
+                success: function (res) {
+
+                    $("#viewls").html(res)
+                }
+            });
+        }
+        function ruttien(uid) {
+            $("#exampleModalCenter").modal()
+            $.ajax({
+                url: '/admin/ruttienuser',
+                type: "POST",
+                dataType: "text",
+                data: { 'uid': uid },
+                success: function (res) {
+
+                    $("#viewls").html(res)
+                }
+            });
+        }
+        function truycap(uid) {
+            location.href = "/admin/truycap?id=" + uid
+        }
+    </script>
+
+

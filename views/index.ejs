@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%-title%>
+    </title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <base href="https://nhapvangnro.com/" />
+    <meta name="description" content="NHAPVANGNRO.COM - Hệ thống nhập vàng tự động" />
+    <meta name="keywords" content="NHAPVANGNRO.COM - Hệ thống nhập vàng tự động" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="NHAPVANGNRO.COM - Hệ thống nhập vàng tự động" />
+    <meta name="twitter:description" content="NHAPVANGNRO.COM - Hệ thống nhập vàng tự động" />
+    <meta name="twitter:image" content="https://NHAPVANGNRO.COM/images/logo.png" />
+    <meta name="twitter:image:width" content="200" />
+    <meta name="twitter:image:height" content="200" />
+
+    <link rel="stylesheet" href="../css/style.css?v=1">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+
+
+
+    <script src="../js/jquery.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link rel="shortcut icon" href='/images/favicon.png' type="image/x-icon" />
+
+</head>
+
+<body>
+
+    <%- include('partials/header'); %>
+        <% if(data.isLogin) {%>
+            <div class="text-center">
+                <div class="member">Xin chào <b style="color:red;">
+                        <%-data.name%>
+                    </b> | Số dư: <b style="color:green;">
+                        <%-data.vang%> vàng
+                            | <a data-toggle="modal" data-target="#dmkModal">Đmk</a> | <a href="/auth/logout">Đăng
+                                xuất</a></div>
+                <br>
+                </b>
+
+            </div>
+            <%}else{%>
+
+                <div class="text-center member"><br><a class="bf bf-green" href="/auth/login">Đăng nhập</a> hoặc <a
+                        class="bf bf-red" href="/auth/register">Đăng ký</a> <br> <br></div>
+
+                <%}%>
+
+                    <div class="phdr" style="margin-top: 0px;"><strong>Navigate</strong></div>
+                    <div class="member">
+                        <br>
+                        <div class="text-center"><a class="bf bf-yellow" href="/">Trang chủ</a> - <a class="bf bf-pri"
+                            href="/napthoi">Nạp thỏi</a>  - <a class="bf bf-red"
+                                href="/napvang">Nạp vàng</a> - <a class="bf bf-green" href="/ruttien">Rút tiền ra</a>
+                        </div>
+                        <br>
+                    </div>
+                    <%- include(page); %>
+
+                        <%- include('partials/footer'); %>
+
+                            <script src="../js/main.js"></script>
+                            <script src="../js/bootstrap.min.js"></script>
+</body>
+
+<div class="modal fade" id="dmkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Đổi mật khẩu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Mật khẩu cũ: <input id="oldpass" type="text" value="">
+                <br>
+                <br>
+                Mật khẩu mới: <input id="passnew" type="text" value="">
+                <br>
+                Nhập lại mật khẩu mới: <input id="repass" type="text" value="">
+                <div id="thongbao"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" onclick="ChangePass()" class="btn btn-primary">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    ChangePass = () => {
+        $("#thongbao").html("")
+        const oldpass = $("#oldpass").val()
+        const password = $("#passnew").val()
+        const repass = $("#repass").val()
+        $.ajax({
+            url: '/auth/changepass',
+            type: "POST",
+            dataType: "text",
+            data: { repassword: repass, password: password, oldpassword: oldpass },
+            success: function (res) {
+                if (JSON.parse(res).error == 0) {
+                    alert("Đổi mật khẩu thành công")
+                    $("#dmkModal").modal("hide")
+                }
+                else {
+
+                    thongbao(JSON.parse(res).msg)
+                }
+            }
+        });
+    }
+</script>
+
+</html>

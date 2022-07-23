@@ -26,40 +26,40 @@
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="display: none;">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-              aria-hidden="true">×</span></button>
-          <h4 class="modal-title">THÔNG BÁO</h4>
-        </div>
-        <div class="modal-body" id="editor">
-  
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title">THÔNG BÁO</h4>
+            </div>
+            <div class="modal-body" id="editor">
 
-          <%-setting.thongbao%>
-  
-  
-        </div>
-<button onclick="saveThongBao()">Save Thông báo</button>
 
-        <div class="modal-footer">
-          <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
+                <%-setting.thongbao%>
+
+
+            </div>
+            <button onclick="saveThongBao()">Save Thông báo</button>
+
+            <div class="modal-footer">
+                <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
 
 <br>
 
 
 <script>
-    
-CKEDITOR.replace('editor', {
-    height: 400,
-    baseFloatZIndex: 10005,
-    removeButtons: 'PasteFromWord'
-});
-saveThongBao=()=>{
+
+    CKEDITOR.replace('editor', {
+        height: 400,
+        baseFloatZIndex: 10005,
+        removeButtons: 'PasteFromWord'
+    });
+    saveThongBao = () => {
         $.ajax({
             url: '/admin/saveThongbao',
             type: "POST",
@@ -68,18 +68,44 @@ saveThongBao=()=>{
                 thongbao: CKEDITOR.instances['editor'].getData(),
             },
             success: function (res) {
-        
-                    alert(res)
-                
+
+                alert(res)
+
             }
         });
     }
 </script>
 
+<br>
 
 
-link bank auto 
-<input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo" >
+TSR auto
+Tk: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.username%>" id="usernametsr">
+Mk: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acctsr.password%>" id="passtsr">
+Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.isRunning%>" id="IsrunningTsr">
+<button onclick="saveTsrAuto()">lưu</button>
+<script>
+    saveTsrAuto = () => {
+        $.ajax({
+            url: '/admin/saveTsrAuto',
+            type: "POST",
+            dataType: "text",
+            data: {
+                "sendmoney.acctsr.username":$("#usernametsr").val(),
+                "sendmoney.acctsr.password":$("#passtsr").val(),
+                "sendmoney.acctsr.isRunning":$("#IsrunningTsr").val(),
+            },
+            success: function (res) {
+                alert(res)
+            }
+        });
+    }
+</script>
+<br>
+<br>
+
+link bank auto
+<input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo">
 <button onclick="saveBankAuto()">lưu</button>
 <br>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalck">
@@ -95,7 +121,7 @@ Tên
 <input id="tnvtuycap" type="text">
 <button onclick="truycapname()">Truy cap</button>
 <script>
-    saveBankAuto=()=>{
+    saveBankAuto = () => {
         $.ajax({
             url: '/admin/saveBankAuto',
             type: "POST",
@@ -104,9 +130,9 @@ Tên
                 linkMomo: $("#linkMomo").val(),
             },
             success: function (res) {
-        
-                    alert(res)
-                
+
+                alert(res)
+
             }
         });
     }
@@ -147,22 +173,22 @@ Tên
                 <%-ruttien%>
                     <br>
                     <%-rutthang%>
-                    <br>
+                        <br>
 
-                    <%-napvang%>
+                        <%-napvang%>
 
-                    <br>
-                    <%-napthang%>
-                    <br>
+                            <br>
+                            <%-napthang%>
+                                <br>
 
-                    <%-htmlNapThoi%>
-                    <br>
+                                <%-htmlNapThoi%>
+                                    <br>
 
-                    <%-htmlThoithang%>
-                       
+                                    <%-htmlThoithang%>
+
             </div>
             <div class="modal-footer">
-            
+
 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
@@ -411,5 +437,3 @@ Tên
             location.href = "/admin/truycap?id=" + uid
         }
     </script>
-
-

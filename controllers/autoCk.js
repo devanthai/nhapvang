@@ -5,19 +5,33 @@ const Setting = require('../models/Setting')
 const Ruttien = require('../models/Hisoutmoney')
 
 const Bot = require('../telegram/bot')
-
+Ruttien.updateMany({ status: 3, type: "2" }, { status: -1 }, (data) => {
+    console.log(data)
+})
 start = async () => {
     setTimeout(() => {
         start()
-    }, 20000);
-    var rutien = await Ruttien.find({ status: -1, type: 2 })
-    for (let i = 0; i < rutien.length; i++) {
-        console.log("\x1b[33m", " đang chuyển " + rutien[i].tknhantien)
-        var cc = await Ruttien.findByIdAndUpdate(rutien[i]._id, { status: 3 })
-        CkTsr(rutien[i].tknhantien, rutien[i].sotien, "nhap vang", rutien[i]._id)
-    }
+    }, 5000);
+    var rutTiens = await Ruttien.find({ status: -1, type: 2 })
+    rutTiens.forEach(async (item) => {
+        console.log("\x1b[33m", "Bắt đầu ck " + item.tknhantien)
+        item.status = 3
+        item.save()
+        var chuyentien = await CkTsr(item.tknhantien, item.sotien, "nhapvangtudong.com")
+        console.log(chuyentien)
+        if (!chuyentien.error) {
+            item.status = 2
+            item.save()
+            Bot.sendMessage(-550321171, "Chuyển tiền Thesieure thành công\nTime: " + chuyentien.time + "s" + "\nTk: " + item.tknhantien + " Số tiền: " + item.sotien);
+        }
+        else {
+            Bot.sendMessage(-550321171, "Chuyển tiền tsr thất bại \nTk: "+item.tknhantien+"\n" + chuyentien.message);
+            item.status = -1
+            item.save()
+        }
+    })
 }
-//start()
+start()
 
 momoStart = async () => {
     const setting = await Setting.findOne({})
@@ -25,16 +39,15 @@ momoStart = async () => {
         momoStart()
     }, 20000);
     var rutien = await Ruttien.findOne({ status: -1, type: 1 })
-    console.log(rutien)
     if (rutien) {
         request.get(setting.bankauto.momo.url + "&amount=" + rutien.sotien + "&phoneTarget=" + rutien.tknhantien + "&comment=Nhapvang", async function (error, response, body) {
             if (!error) {
                 if (body == "thanhcong") {
                     await Ruttien.findOneAndUpdate({ _id: rutien._id }, { status: 1 })
-                    Bot.sendMessage(-550321171, "Auto momo success "+rutien.tknhantien+" "+rutien.sotien);
+                    Bot.sendMessage(-550321171, "Auto momo success " + rutien.tknhantien + " " + rutien.sotien);
                 }
                 else {
-                    Bot.sendMessage(-550321171, "Chuyen tien MOMO loi "+rutien.tknhantien+" "+rutien.sotien);
+                    Bot.sendMessage(-550321171, "Chuyen tien MOMO loi " + rutien.tknhantien + " " + rutien.sotien);
                 }
             }
         })
@@ -43,16 +56,17 @@ momoStart = async () => {
 }
 momoStart()
 
-function CkTsr(taikhoan, sotien, noidung, iddon) {
+function CkTsr(taikhoan, sotien, noidung) {
     return new Promise(async (resolve) => {
         var timeStart = new Date().getTime()
         try {
-
-
-            request.get('https://thesieure.com/account/login', async function (error, response, body) {
+            request.get({ jar: true, url: 'https://thesieure.com/account/login' }, async function (error, response, body) {
                 var Settingz = await Setting.findOne({ setting: "setting" })
-                if (error) { return resolve("loi tai 2002") }
-                if (response.statusCode == 200) {
+                if (error) { return resolve({ error: true, message: "Lỗi lấy token login" }) }
+                if (response.statusCode != 200) {
+                    return resolve({ error: true, message: "Lỗi lấy token login status != 200" })
+                }
+                else if (response.statusCode == 200) {
                     const $ = cheerio.load(body);
                     var token = $('[name=_token]').val()
                     const cj = request.jar();
@@ -70,8 +84,11 @@ function CkTsr(taikhoan, sotien, noidung, iddon) {
                         }
                     };
                     request.post(options, (error, res, body) => {
-                        if (error) { return resolve("loi tai 2001") }
-                        if (res.statusCode == 302) {
+                        if (error) { return resolve({ error: true, message: "Lỗi post login " + error.message }) }
+                        if (res.statusCode != 302) {
+                            return resolve({ error: true, message: "Lỗi post login status != 302" })
+                        }
+                        else if (res.statusCode == 302) {
                             request({
                                 url: "https://thesieure.com/wallet/transfer",
                                 method: "GET",
@@ -80,123 +97,148 @@ function CkTsr(taikhoan, sotien, noidung, iddon) {
                                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
                                 }
                             }, async function (error, response, body) {
-                                const $ = cheerio.load(body);
-                                var token = $('[name=_token]').val()
-                                var payer_wallet
-                                try {
-                                    payer_wallet = body.split('option value="')[1].split('"')[0]
-                                } catch (error) {
-                                    console.log(body)
-                                    console.log("loi tai ck 5")
-                                    await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                    return resolve("loi tai ck 5")
+                                if (error) {
+                                    return resolve({ error: true, message: "Lỗi get transfer error " + error.message })
                                 }
-                                if (payer_wallet == undefined) {
-
-                                    console.log("next")
-                                    await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                    return resolve("next")
+                                else if (response.statusCode != 200) {
+                                    return resolve({ error: true, message: "Lỗi get transfer status != 200" })
                                 }
-                                request({
-                                    url: "https://thesieure.com/wallet/transfer/verify",
-                                    method: "POST",
-                                    jar: cj,
-                                    headers: {
-                                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
-                                    },
-                                    json: true,
-                                    body: { "payer_wallet": payer_wallet, "payee_info": taikhoan, "payee_name": "qqqq", "amount": sotien, "description": noidung, "_token": token }
-                                }, async function (error, response, body) {
+                                else if (response.statusCode == 200) {
                                     const $ = cheerio.load(body);
-                                    var _token = $('[name=_token]').val()
-                                    var data_encode = $('[name=data_encode]').val()
-                                    var g_recaptcha
-                                    try {
-                                        g_recaptcha = body.split('data-sitekey="')[1].split('"')[0]
-                                    }
-                                    catch
-                                    {
-                                        console.log(body)
-                                        await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                        console.log("loi tai ck 4")
-                                        return resolve("loi tai ck 4")
-                                    }
-                                    if (body.includes("error")) {
-
-                                        await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                        console.log("loi tai ck 22")
-                                        return resolve("loi tai ck 22")
-                                    }
+                                    var token = $('[name=_token]').val()
                                     request({
-                                        url: "https://2captcha.com/in.php?key=" + key2captcha + "&method=userrecaptcha&googlekey=" + g_recaptcha + "&pageurl=https://thesieure.com/wallet/transfer/verify",
-                                        method: "GET"
-                                    }, async function (error, response, body) {
-                                        var idget = body.split('|')[1]
-                                        var solangiai = 0
-                                        var lapgiaicaptcha = setInterval(async () => {
+                                        url: "https://thesieure.com/transfer/ajax/get-user-name",
+                                        method: "POST",
+                                        jar: cj,
+                                        headers: {
+                                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
+                                        },
+                                        json: true,
+                                        body: { "_token": token, "payee_info": taikhoan }
+                                    }, async function (errorGetTk, responseGetTk, bodyGetTk) {
+                                        if (errorGetTk) {
+                                            return resolve({ error: true, message: "Lỗi get username error " + error.message })
+                                        }
+                                        else if (responseGetTk.statusCode != 200) {
+                                            return resolve({ error: true, message: "Lỗi get username status != 200" })
+                                        }
+                                        else if (bodyGetTk == "" || bodyGetTk == null || bodyGetTk == undefined) {
+                                            return resolve({ error: true, message: "Không tìm thấy username", status: 5 })
+                                        }
+                                        else if (responseGetTk.statusCode == 200) {
+                                            var payer_wallet
+                                            try {
+                                                payer_wallet = body.split('option value="')[1].split('"')[0]
+                                            } catch (error) {
+                                                return resolve({ error: true, message: "Lỗi get payer_wallet" })
+                                            }
+                                            if (payer_wallet == undefined) {
+                                                return resolve({ error: true, message: "Lỗi get payer_wallet" })
+                                            }
                                             request({
-                                                url: "https://2captcha.com/res.php?key=" + key2captcha + "&action=get&id=" + idget,
-                                                method: "GET"
+                                                url: "https://thesieure.com/wallet/transfer/verify",
+                                                method: "POST",
+                                                jar: cj,
+                                                headers: {
+                                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
+                                                },
+                                                json: true,
+                                                body: { "payer_wallet": payer_wallet, "payee_info": taikhoan, "payee_name": "qqqq", "amount": sotien, "description": noidung, "_token": token }
                                             }, async function (error, response, body) {
-                                                try {
-                                                    if (!body.includes("CAPCHA_NOT_READY") && !body.includes("OK")) {
-                                                        await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                                        console.log("Giải captcha thất bại")
-                                                        clearInterval(lapgiaicaptcha)
-
-                                                        console.log("loi tai ck 2")
-                                                        return resolve("loi tai ck 2")
+                                                if (error) {
+                                                    return resolve({ error: true, message: "Lỗi transfer/verify error " + error.message })
+                                                }
+                                                else if (response.statusCode != 200) {
+                                                    return resolve({ error: true, message: "Lỗi transfer/verify status != 200" })
+                                                }
+                                                else {
+                                                    const $ = cheerio.load(body);
+                                                    var _token = $('[name=_token]').val()
+                                                    var data_encode = $('[name=data_encode]').val()
+                                                    var g_recaptcha
+                                                    try {
+                                                        g_recaptcha = body.split('data-sitekey="')[1].split('"')[0]
                                                     }
-                                                    else if (body.includes("OK")) {
-                                                        var responsecaptcha = body.split("|")[1]
-                                                        request({
-                                                            url: "https://thesieure.com/wallet/transfer/confirm",
-                                                            method: "POST",
-                                                            jar: cj,
-                                                            headers: {
-
-                                                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
-                                                            },
-                                                            json: true,
-                                                            body: { "g-recaptcha-response": responsecaptcha, secret: Settingz.sendmoney.acctsr.otp, "data_encode": data_encode, "action": "doPayment", "_token": _token }
-                                                        }, async function (error, response, body) {
-                                                            try {
-                                                                await Ruttien.findByIdAndUpdate(iddon, { status: 1 })
-                                                                console.log("\x1b[32m", "Chuyển tiền cho " + taikhoan + " thành công " + "Success: " + (new Date().getTime() - timeStart))
-                                                                clearInterval(lapgiaicaptcha)
-                                                                if (body.includes("https://thesieure.com/transfer/result/")) {
-
-                                                                }
-                                                                else {
-                                                                    console.log(body)
-                                                                }
-                                                                //await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                                                return resolve("thanhcong|" + sotien + "|" + (new Date().getTime() - timeStart))
-                                                            } catch {
-                                                                console.log(body)
-                                                            }
-                                                        })
+                                                    catch
+                                                    {
+                                                        return resolve({ error: true, message: "Lỗi lấy g_recaptcha" })
                                                     }
-                                                } catch {
-                                                    console.log("loi tai ck 2 22")
+                                                    if (body.includes("error")) {
+                                                        return resolve({ error: true, message: "Lỗi bode error" })
+                                                    }
+                                                    request({
+                                                        url: "https://2captcha.com/in.php?key=" + key2captcha + "&method=userrecaptcha&googlekey=" + g_recaptcha + "&pageurl=https://thesieure.com/wallet/transfer/verify",
+                                                        method: "GET"
+                                                    }, async function (error, response, body) {
+                                                        if (response.statusCode != 200) {
+                                                            return resolve({ error: true, message: "Lỗi get captcha status != 200" })
+                                                        }
+                                                        else {
+                                                            var idget = body.split('|')[1]
+                                                            var solangiai = 0
+                                                            var lapgiaicaptcha = setInterval(async () => {
+                                                                request({
+                                                                    url: "https://2captcha.com/res.php?key=" + key2captcha + "&action=get&id=" + idget,
+                                                                    method: "GET"
+                                                                }, async function (error, response, body) {
+                                                                    if (response.statusCode == 200) {
+                                                                        if (!body.includes("CAPCHA_NOT_READY") && !body.includes("OK")) {
+                                                                            clearInterval(lapgiaicaptcha)
+                                                                            return resolve({ error: true, message: "Lỗi giải captcha thất bại" })
+                                                                        }
+                                                                        else if (body.includes("OK")) {
+                                                                            clearInterval(lapgiaicaptcha)
+                                                                            var responsecaptcha = body.split("|")[1]
+                                                                            request({
+                                                                                url: "https://thesieure.com/wallet/transfer/confirm",
+                                                                                method: "POST",
+                                                                                jar: cj,
+                                                                                headers: {
+                                                                                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36'
+                                                                                },
+                                                                                json: true,
+                                                                                body: { "g-recaptcha-response": responsecaptcha, secret: Settingz.sendmoney.acctsr.otp, "data_encode": data_encode, "action": "doPayment", "_token": _token }
+                                                                            }, async function (error, response, body) {
+                                                                                if (error) {
+                                                                                    return resolve({ error: true, message: "Lỗi tại transfer/confirm " + error.message })
+                                                                                }
+                                                                                else if (response.statusCode == 302) {
+                                                                                    if (body.includes("Redirecting")) {
+                                                                                        return resolve({ error: false, message: "Chuyển tiền thành công", time: new Date().getTime() - timeStart })
+                                                                                    }
+                                                                                    else {
+                                                                                        return resolve({ error: true, message: "Thất bại k biet tai sao " + body })
+                                                                                    }
+                                                                                }
+                                                                                else {
+                                                                                    return resolve({ error: true, message: "Lỗi gì k biết tại transfer/confirm" })
+                                                                                }
+                                                                            })
+                                                                        }
+                                                                    }
+                                                                    else {
+                                                                        console.log("Lỗi check captcha")
+                                                                    }
+                                                                })
+                                                                solangiai++
+                                                                if (solangiai > 25) {
+                                                                    clearInterval(lapgiaicaptcha)
+                                                                    return resolve({ error: true, message: "Lỗi giải captcha quá thời gian" })
+                                                                }
+                                                            }, 5000)
+                                                        }
+                                                    })
                                                 }
                                             })
-                                            solangiai++
-                                            if (solangiai > 25) {
-                                                await Ruttien.findOneAndUpdate({ _id: iddon, status: 3 }, { status: -1 })
-                                                clearInterval(lapgiaicaptcha)
-                                                console.log("loi tai qua thoi gian giai captcha")
-                                                return resolve("loi tai qua thoi gian giai captcha")
-                                            }
-                                        }, 5000)
+                                        }
                                     })
-                                })
+                                }
                             });
                         }
                     })
                 }
             })
-        } catch { return resolve("loi") }
+        } catch (ex) { console.log(ex); return resolve({ error: true, message: "Lỗi không xác định "+error.message }) }
     })
 }
 module.exports = { CkTsr }

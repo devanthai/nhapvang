@@ -13,6 +13,12 @@ router.use(function (req, res, next) {
     }
     next()
 })
+router.post('/saveTsrAuto', async (req, res) => {
+    const thongbao = req.body
+   
+    await Setting.findOneAndUpdate({}, thongbao)
+    res.send("ok")
+})
 router.post('/saveThongbao', async (req, res) => {
     const thongbao = req.body.thongbao
     await Setting.findOneAndUpdate({}, { "thongbao": thongbao })

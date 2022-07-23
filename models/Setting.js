@@ -27,16 +27,14 @@ const setting = new mongoose.Schema({
     sendmoney: {
         urlmm: { type: String, default: "link.me" },
         acctsr: {
-            username: { type: String, default: "taikhoan" },
-            password: { type: String, default: "pass" },
-            otp: { type: String, default: "9011111" }
+            username: { type: String, default: "namphuong00" },
+            password: { type: String, default: "Xt221612@@" },
+            otp: { type: String, default: "9011111" },
+            isRunning: { type: Boolean, default: true }
         }
     },
-    bankauto:{
-        momo:{ url:{type:String,default:"https://momo.the9sao.com/bankAuto?phone=0327194073&pass="}}
+    bankauto: {
+        momo: { url: { type: String, default: "https://momo.the9sao.com/bankAuto?phone=0327194073&pass=" } }
     }
-
-
-
 })
 module.exports = mongoose.model('Settingnhap', setting)

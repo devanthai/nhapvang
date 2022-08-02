@@ -77,13 +77,53 @@
 </script>
 
 <br>
+<hr style=" border-top: 1px solid red;">
 
 
-TSR auto
+<center>TSR AUTO</center>
+
 Tk: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.username%>" id="usernametsr">
 Mk: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acctsr.password%>" id="passtsr">
 Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.isRunning%>" id="IsrunningTsr">
 <button onclick="saveTsrAuto()">lưu</button>
+<br>
+<br>
+
+<hr style=" border-top: 1px solid red;">
+<br>
+<center>BANK ACB AUTO</center>
+Link Api Acb: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.linkapi%>" id="linkapiacb">
+Username: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.username%>" id="usernameacb">
+accountNumber: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.accountNumber%>" id="accountNumberAcb">
+Password: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.accAcb.password%>" id="passacb">
+Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.isRunning%>" id="IsrunningAcb">
+<button onclick="saveAcbAuto()">lưu</button>
+
+<script>
+    saveAcbAuto = () => {
+        $.ajax({
+            url: '/admin/saveTsrAuto',
+            type: "POST",
+            dataType: "text",
+            data: {
+                "sendmoney.accAcb.linkapi":$("#linkapiacb").val(),
+                "sendmoney.accAcb.username":$("#usernameacb").val(),
+                "sendmoney.accAcb.accountNumber":$("#accountNumberAcb").val(),
+                "sendmoney.accAcb.password":$("#passacb").val(),
+                "sendmoney.accAcb.isRunning":$("#IsrunningAcb").val(),
+            },
+            success: function (res) {
+                alert(res)
+            }
+        });
+    }
+</script>
+
+<br>
+<br>
+
+<hr style=" border-top: 1px solid red;">
+<br>
 <script>
     saveTsrAuto = () => {
         $.ajax({
@@ -102,11 +142,15 @@ Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.a
     }
 </script>
 <br>
-<br>
 
-link bank auto
+
+<center>MOMO AUTO</center>
 <input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo">
 <button onclick="saveBankAuto()">lưu</button>
+<br>
+<br>
+
+<hr style=" border-top: 1px solid red;">
 <br>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalck">
     Chỉnh giá vàng

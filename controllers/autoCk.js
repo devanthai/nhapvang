@@ -8,6 +8,14 @@ const Bot = require('../telegram/bot')
 Ruttien.updateMany({ status: 3, type: "2" }, { status: -1 }, (data) => {
     console.log(data)
 })
+
+
+Ruttien.updateMany({ status: 3, type: "4" }, { status: -1 }, (data) => {
+    console.log(data)
+})
+
+
+
 start = async () => {
     setTimeout(() => {
         start()
@@ -25,7 +33,7 @@ start = async () => {
             Bot.sendMessage(-550321171, "Chuyển tiền Thesieure thành công\nTime: " + chuyentien.time + "s" + "\nTk: " + item.tknhantien + " Số tiền: " + item.sotien);
         }
         else {
-            Bot.sendMessage(-550321171, "Chuyển tiền tsr thất bại \nTk: "+item.tknhantien+"\n" + chuyentien.message);
+            Bot.sendMessage(-550321171, "Chuyển tiền tsr thất bại \nTk: " + item.tknhantien + "\n" + chuyentien.message);
             item.status = -1
             item.save()
         }
@@ -170,7 +178,10 @@ function CkTsr(taikhoan, sotien, noidung) {
                                                         url: "https://2captcha.com/in.php?key=" + key2captcha + "&method=userrecaptcha&googlekey=" + g_recaptcha + "&pageurl=https://thesieure.com/wallet/transfer/verify",
                                                         method: "GET"
                                                     }, async function (error, response, body) {
-                                                        if (response.statusCode != 200) {
+                                                        if (response.statusCode == undefined) {
+                                                            return resolve({ error: true, message: "Lỗi get captcha thất bại 1 " + body })
+                                                        }
+                                                        else if (response.statusCode != 200) {
                                                             return resolve({ error: true, message: "Lỗi get captcha status != 200" })
                                                         }
                                                         else {
@@ -181,7 +192,12 @@ function CkTsr(taikhoan, sotien, noidung) {
                                                                     url: "https://2captcha.com/res.php?key=" + key2captcha + "&action=get&id=" + idget,
                                                                     method: "GET"
                                                                 }, async function (error, response, body) {
-                                                                    if (response.statusCode == 200) {
+
+                                                                    if (response.statusCode == undefined) {
+                                                                        clearInterval(lapgiaicaptcha)
+                                                                        return resolve({ error: true, message: "Lỗi get captcha thất bại 2 " + body })
+                                                                    }
+                                                                    else if (response.statusCode == 200) {
                                                                         if (!body.includes("CAPCHA_NOT_READY") && !body.includes("OK")) {
                                                                             clearInterval(lapgiaicaptcha)
                                                                             return resolve({ error: true, message: "Lỗi giải captcha thất bại" })
@@ -227,6 +243,7 @@ function CkTsr(taikhoan, sotien, noidung) {
                                                                 }
                                                             }, 5000)
                                                         }
+
                                                     })
                                                 }
                                             })
@@ -238,7 +255,183 @@ function CkTsr(taikhoan, sotien, noidung) {
                     })
                 }
             })
-        } catch (ex) { console.log(ex); return resolve({ error: true, message: "Lỗi không xác định "+error.message }) }
+        } catch (ex) { console.log(ex); return resolve({ error: true, message: "Lỗi không xác định " + error.message }) }
+    })
+}
+
+
+startCkBank = async () => {
+    setTimeout(() => {
+        startCkBank()
+    }, 20000);
+    var rutbank = await Ruttien.findOne({ status: -1, type: 4 })
+    if (rutbank) {
+        var setting = await Setting.findOne()
+        if (setting.sendmoney.accAcb.isRunning == true) {
+            const { typebank, sotien, tknhantien, name } = rutbank
+            rutbank.status = 3
+            rutbank.save()
+            var bankcode = null
+            if (typebank == "BIDV") {
+                bankcode = 970418
+            }
+            else if (typebank == "MB") {
+                bankcode = 970422
+            }
+            else if (typebank == "AGR") {
+                bankcode = 970405
+            }
+            else if (typebank == "ACB") {
+                bankcode = 970416
+            }
+            else if (typebank == "SACOMBANK") {
+                bankcode = 970403
+            }
+            else if (typebank == "VIETCOMBANK") {
+                bankcode = 970436
+            }
+            else if (typebank == "TECHCOMBANK") {
+                bankcode = 970407
+            }
+            else if (typebank == "DONGA") {
+                bankcode = 970406
+            }
+            else if (typebank == "VIETINBANK") {
+                bankcode = 970415
+            }
+            else if (typebank == "VPBANK") {
+                bankcode = 970432
+            }
+            else if (typebank == "TPBANK") {
+                bankcode = 970423
+            }
+            else if (typebank == "EXB") {
+                bankcode = 970431
+            }
+            else if (typebank == "SEA") {
+                bankcode = 970440
+            }
+            else if (typebank == "HDB") {
+                bankcode = 970437
+            }
+            else if (typebank == "VIB") {
+                bankcode = 970441
+            }
+            else if (typebank == "OCE") {
+                bankcode = 970414
+            }
+            else if (typebank == "SHB") {
+                bankcode = 970443
+            }
+
+            var ck = await ckAcb(
+                setting.sendmoney.accAcb.linkapi,
+                setting.sendmoney.accAcb.username,
+                setting.sendmoney.accAcb.password,
+                setting.sendmoney.accAcb.accountNumber,
+                tknhantien,
+                bankcode,
+                sotien,
+                "nhapvangnro.com",
+                'OTPS'
+            )
+            console.log(ck)
+            if (!ck.error) {
+                rutbank.status = 2
+                rutbank.save()
+                var namebankz = ck.data.receiverName
+                var bankname = ck.data.bankName
+                Bot.sendMessage(-550321171, "Chuyển tiền Bank thành công\nUsername: " + name + "\nTk: " + tknhantien + " Số tiền: " + sotien + "\nName: " + namebankz + "\nBank:" + bankname);
+            }
+            else {
+                Bot.sendMessage(-550321171, "Chuyển tiền Bank thất bại \nTk: " + tknhantien + "\n" + ck.message);
+                rutbank.status = -1
+
+                if (ck.message.includes("checkReceiveAccount failed:")) {
+                    rutbank.status = 5
+                }
+                
+                rutbank.save()
+            }
+        }
+    }
+}
+startCkBank()
+
+var urlGetCode9sao = "https://acb.doitien.me/getOTP9sao"
+ckAcb = (urlapi, username, password, accountNumber, tranfer_to, napasBankCode, amount, message, otp_type = 'OTPS') => {
+    return new Promise(async (resolve) => {
+        const options = {
+            url: urlapi + "api/acb/tranfer_247",
+            json: true,
+            body: {
+                accountNumber: accountNumber,
+                username: username,
+                password: password,
+                tranfer_to: tranfer_to,
+                napasBankCode: napasBankCode.toString(),
+                amount: amount,
+                message: message,
+                otp_type: otp_type
+            }
+        };
+        request.post(options, (error, res, body) => {
+            if (error) {
+                return resolve({ error: true, message: "Lỗi tại api/acb/tranfer_247 " + error.message })
+            }
+            else if (res.statusCode != 200) {
+                return resolve({ error: true, message: "Lỗi tại api/acb/tranfer_247 status != 200" })
+            }
+            else {
+                var jsonRes = body
+                if (jsonRes.success == true) {
+                    var uuid = jsonRes.data.uuid
+                    request.get(urlGetCode9sao, async function (error, response, body) {
+                        if (error) {
+                            return resolve({ error: true, message: "Lỗi tại get code " + error.message })
+                        }
+                        else if (response.statusCode != 200) {
+                            return resolve({ error: true, message: "Lỗi tại get code status != 200" })
+                        }
+                        else {
+                            var code = body
+                            const options = {
+                                url: urlapi + "api/acb/confirm_tranfer",
+                                json: true,
+                                body: {
+                                    accountNumber: accountNumber,
+                                    username: username,
+                                    password: password,
+                                    uuid: uuid,
+                                    code: code,
+                                    otp_type: otp_type
+                                }
+                            };
+                            request.post(options, (error, res, body) => {
+                                if (error) {
+                                    return resolve({ error: true, message: "Lỗi tại confirm_tranfer " + error.message })
+                                }
+                                else if (res.statusCode != 200) {
+                                    return resolve({ error: true, message: "Lỗi tại get confirm_tranfer status != 200" })
+                                }
+                                else {
+                                    var resJsson = body
+                                    if (resJsson.success == true) {
+                                        return resolve({ error: false, message: "Ck thành công", data: resJsson })
+                                    }
+                                    else {
+                                        return resolve({ error: true, message: "Lỗi tại not success confirm_tranfer " + JSON.stringify(resJsson) })
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+                else {
+                    return resolve({ error: true, message: "Lỗi tại not success " + JSON.stringify(jsonRes) })
+                }
+            }
+        })
     })
 }
 module.exports = { CkTsr }

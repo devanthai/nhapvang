@@ -31,6 +31,13 @@ const setting = new mongoose.Schema({
             password: { type: String, default: "Xt221612@@" },
             otp: { type: String, default: "9011111" },
             isRunning: { type: Boolean, default: true }
+        },
+        accAcb: {
+            linkapi:{ type: String, default: "http://139.180.133.253/" },
+            username: { type: String, default: "4161701" },
+            password: { type: String, default: "Tronganhdz5577" },
+            accountNumber: { type: String, default: "4161701" },
+            isRunning: { type: Boolean, default: true }
         }
     },
     bankauto: {

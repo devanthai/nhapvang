@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalCenterTitle">Cộng vàng thành viên</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div id="viewck" class="modal-body">
+    <span>Tài khoản: </span> <input id="usernameup" type="text">
+    <br>
+    <span>Số vàng: </span> <input id="goldup" type="text">
+    <br>
+    <button onclick="congvang()" type="button" class="btn btn-primary">
+        Cộng ngay
+    </button>
+
+</div>
+<script>
+
+    congvang = () => {
+        if (!confirm("Bạn có muốn ấn ok không?")) {
+            return
+        }
+
+        $.ajax({
+            url: '/admin/congvang',
+            type: "POST",
+            dataType: "text",
+            data: {
+                username: $("#usernameup").val(),
+                gold: $("#goldup").val()
+
+            },
+            success: function (res) {
+                alert(res);
+
+                if (res.includes("thành công")) {
+                    $("#modalcongtien").modal("hide")
+                }
+
+            }
+        });
+    }
+</script>

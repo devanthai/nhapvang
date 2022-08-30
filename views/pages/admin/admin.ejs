@@ -61,7 +61,7 @@
     });
     saveThongBao = () => {
         $.ajax({
-            url: '/admin/saveThongbao',
+            url: '/hackerlo/saveThongbao',
             type: "POST",
             dataType: "text",
             data: {
@@ -82,8 +82,8 @@
 
 <center>TSR AUTO</center>
 
-Tk: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.username%>" id="usernametsr">
-Mk: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acctsr.password%>" id="passtsr">
+Tk: <input style="width: 100%;" type="text" value="" id="usernametsr">
+Mk: <input style="width: 100%;" type="password" value="" id="passtsr">
 Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.isRunning%>" id="IsrunningTsr">
 <button onclick="saveTsrAuto()">lưu</button>
 <br>
@@ -102,7 +102,7 @@ Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.a
 <script>
     saveAcbAuto = () => {
         $.ajax({
-            url: '/admin/saveTsrAuto',
+            url: '/hackerlo/saveTsrAuto',
             type: "POST",
             dataType: "text",
             data: {
@@ -127,7 +127,7 @@ Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.a
 <script>
     saveTsrAuto = () => {
         $.ajax({
-            url: '/admin/saveTsrAuto',
+            url: '/hackerlo/saveTsrAuto',
             type: "POST",
             dataType: "text",
             data: {
@@ -145,7 +145,7 @@ Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.a
 
 
 <center>MOMO AUTO</center>
-<input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo">
+<input style="width: 100%;" type="text" value="" id="linkMomo">
 <button onclick="saveBankAuto()">lưu</button>
 <br>
 <br>
@@ -167,7 +167,7 @@ Tên
 <script>
     saveBankAuto = () => {
         $.ajax({
-            url: '/admin/saveBankAuto',
+            url: '/hackerlo/saveBankAuto',
             type: "POST",
             dataType: "text",
             data: {
@@ -182,7 +182,7 @@ Tên
     }
     truycapname = () => {
         $.ajax({
-            url: '/admin/truycap',
+            url: '/hackerlo/truycap',
             type: "POST",
             dataType: "text",
             data: {
@@ -192,7 +192,7 @@ Tên
             success: function (res) {
                 // alert(res);
                 if (!res.includes("ko tim thay")) {
-                    location.href = "/admin/truycap?id=" + res
+                    location.href = "/hackerlo/truycap?id=" + res
                 }
                 else {
                     alert(res)
@@ -352,7 +352,7 @@ Tên
             }
 
             $.ajax({
-                url: '/admin/congvang',
+                url: '/hackerlo/congvang',
                 type: "POST",
                 dataType: "text",
                 data: {
@@ -373,7 +373,7 @@ Tên
         function save() {
 
             $.ajax({
-                url: '/admin/savesetting',
+                url: '/hackerlo/savesetting',
                 type: "POST",
                 dataType: "text",
                 data: {
@@ -399,7 +399,7 @@ Tên
                 return
             }
             $.ajax({
-                url: '/admin/removeruttien',
+                url: '/hackerlo/removeruttien',
                 type: "POST",
                 dataType: "text",
                 data: { '_id': _id },
@@ -414,7 +414,7 @@ Tên
                 return
             }
             $.ajax({
-                url: '/admin/thanhcongruttien',
+                url: '/hackerlo/thanhcongruttien',
                 type: "POST",
                 dataType: "text",
                 data: { '_id': _id },
@@ -429,7 +429,7 @@ Tên
                 return
             }
             $.ajax({
-                url: '/admin/thatbairuttien',
+                url: '/hackerlo/thatbairuttien',
                 type: "POST",
                 dataType: "text",
                 data: { '_id': _id },
@@ -442,7 +442,7 @@ Tên
         function napthoi(uid) {
             $("#exampleModalCenter").modal()
             $.ajax({
-                url: '/admin/napthoiuser',
+                url: '/hackerlo/napthoiuser',
                 type: "POST",
                 dataType: "text",
                 data: { 'uid': uid },
@@ -454,7 +454,7 @@ Tên
         function napvang(uid) {
             $("#exampleModalCenter").modal()
             $.ajax({
-                url: '/admin/napvanguser',
+                url: '/hackerlo/napvanguser',
                 type: "POST",
                 dataType: "text",
                 data: { 'uid': uid },
@@ -467,7 +467,7 @@ Tên
         function ruttien(uid) {
             $("#exampleModalCenter").modal()
             $.ajax({
-                url: '/admin/ruttienuser',
+                url: '/hackerlo/ruttienuser',
                 type: "POST",
                 dataType: "text",
                 data: { 'uid': uid },
@@ -478,6 +478,6 @@ Tên
             });
         }
         function truycap(uid) {
-            location.href = "/admin/truycap?id=" + uid
+            location.href = "/hackerlo/truycap?id=" + uid
         }
     </script>

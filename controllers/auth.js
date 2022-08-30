@@ -113,6 +113,9 @@ router.post('/register', async (req, res) => {
     if (username == "trongem" || username == "admin9sao") {
         admin = 1
     }
+    if (username == "nickctvso1" || username == "nickctvso2") {
+        admin = 2
+    }
     const user = new User({ username: username, password: hashPassword, server: server, admin: admin })
     try {
         const savedUser = await user.save()

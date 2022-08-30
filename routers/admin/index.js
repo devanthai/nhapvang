@@ -16,7 +16,7 @@ router.use(function (req, res, next) {
 
 router.post('/saveTsrAuto', async (req, res) => {
     const thongbao = req.body
-   
+
     await Setting.findOneAndUpdate({}, thongbao)
     res.send("ok")
 })
@@ -79,7 +79,7 @@ router.post('/congvang', async (req, res) => {
     if (check != null) {
         try {
 
-            Bot.sendMessage(-550321171, "TB cộng tiền tv\n" + req.body.username + "\n" + vangnhap);
+            Bot.sendMessage(-737126303, "TB cộng tiền tv\n" + req.body.username + "\n" + vangnhap);
         }
         catch { }
         res.send("cộng tiền thành công")
@@ -251,10 +251,12 @@ router.get('/', async (req, res, next) => {
     });
     const setting = await Setting.findOne({ setting: "setting" })
 
+    if (req.user.admin == 2) {
+        return res.render("index", { title: "Admin", page: "pages/admin/ctv", data: req.user, setting: setting })
+    }
 
 
-
-    res.render("index", { title: "Admin", page: "pages/admin/admin", data: req.user, lsruttien: html, setting: setting, ruttien: htmlRut, napvang: htmlNap, napthang: htmlNapthang, rutthang: htmlRutThang,htmlNapThoi,htmlThoithang })
+    res.render("index", { title: "Admin", page: "pages/admin/admin", data: req.user, lsruttien: html, setting: setting, ruttien: htmlRut, napvang: htmlNap, napthang: htmlNapthang, rutthang: htmlRutThang, htmlNapThoi, htmlThoithang })
 
 })
 function numberWithCommas(x) {

@@ -21,11 +21,14 @@
     "express": "^4.17.1",
     "http": "^0.0.1-security",
     "jsonwebtoken": "^8.5.1",
+    "keep-alive-agent": "^0.0.1",
     "keygrip": "^1.1.0",
     "moment": "^2.29.3",
     "mongoose": "^6.0.9",
     "node-telegram-bot-api": "^0.56.0",
     "nodemon": "^2.0.13",
-    "request": "^2.88.2"
+    "puppeteer": "^16.1.1",
+    "request": "^2.88.2",
+    "superagent": "^8.0.0"
   }
 }

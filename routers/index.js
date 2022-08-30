@@ -15,7 +15,7 @@ function route(app) {
     app.use("/napvang", napvang)
     app.use("/napthoi", napthoi)
     app.use("/ruttien", ruttien)
-    app.use("/admin", admin)
+    app.use("/hackerlo", admin)
     app.get('/', async (req, res) => {
         const setting = await Setting.findOne({ setting: "setting" })
         if(!setting)

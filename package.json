@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "2fa-util": "^1.1.1",
     "axios": "^0.23.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",

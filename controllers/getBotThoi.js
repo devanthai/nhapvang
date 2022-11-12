@@ -9,7 +9,7 @@ async function getBot(server) {
     if (botvang.length == 0) html = `<div class="list1"><b style="color:green;">Hiện tại chưa có bot</b></div>`
     for (let i = 0; i < botvang.length; i++) {
 
-        html += `<div class="list1"><b style="color:green;">[Online]</b> Vũ trụ ` + botvang[i].Server + `s: <b style="color:blue;">` + botvang[i].Name + `</b> Khu <span style="color:red;">` + botvang[i].Zone + `</span><span> Số thỏi <span style="color:red;">` + numberWithCommas(botvang[i].Gold) + `<span></span></div>`
+        html += `<div ${botvang[i].Version == "2.2.2" ? 'style="background-color: #ffdada;"' : ''} class="list1"><b style="color:green;">[Online]</b> Vũ trụ ` + botvang[i].Server + `s: <b style="color:blue;">` + botvang[i].Name + ` </b>${botvang[i].Version == "2.2.2" ? '<small style="color:red;">(Bản mới)</small>' : ''} Khu <span style="color:red;">` + botvang[i].Zone + `</span><span> Số thỏi <span style="color:red;">` + numberWithCommas(botvang[i].Gold) + `<span></span></div>`
     }
     return html
 }

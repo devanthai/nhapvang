@@ -12,18 +12,26 @@ module.exports = async function (req, res, next) {
     var vang = 0;
     var name = "";
 
+
+
     const user = await User.findOne({ _id: userID })
+
+
+
     if (user) {
 
       isLogin = true;
       name = user.username;
       vang = user.vang;
       admin = user.admin
-      req.user = { server: user.server, _id: user._id, name: name, vang: numberWithCommas(Math.round(vang)), isLogin: isLogin, admin: admin }
+
+      const f2a = { f2a: req.session.f2a }
+
+      req.user = admin > 0 ? { server: user.server, _id: user._id, name: name, vang: numberWithCommas(Math.round(vang)), isLogin: isLogin, admin: admin, ...f2a } : { server: user.server, _id: user._id, name: name, vang: numberWithCommas(Math.round(vang)), isLogin: isLogin, admin: admin }
     }
     else {
 
-      req.user = { isLogin: false, admin: admin }
+      req.user = { isLogin: false, admin: admin, }
     }
     return next();
   } else {

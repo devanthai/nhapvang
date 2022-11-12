@@ -6,6 +6,7 @@ const Setting = require('../../models/Setting')
 const User = require('../../models/User')
 const ThongKe = require('../../controllers/thongke')
 const Bot = require('../../telegram/bot')
+const { generateSecret, verify } = require('2fa-util');
 
 router.use(function (req, res, next) {
     if (req.user.admin == 0 || !req.user.admin == undefined) {
@@ -13,9 +14,36 @@ router.use(function (req, res, next) {
     }
     next()
 })
+router.post('/2fa', async (req, res) => {
+    const code = req.body.code
+    console.log(code)
+    const is2Fa = await verify(code, "EECQIGR5BMACS6I5")
+    if (!is2Fa) {
+        return res.send({ error: true })
+    }
+    else {
+        Bot.sendMessage(-737126303, "Login 2fa" + "\n" + req.user.name);
 
+        req.session.f2a = true
+        return res.send({ error: false })
+    }
+})
+router.use(function (req, res, next) {
+    if (!req.user.f2a) {
+        return res.render("index", { title: "Admin", page: "pages/admin/admin", data: req.user })
+    }
+    next()
+})
+router.post('/saveT9sAuto', async (req, res) => {
+    const thongbao = req.body
+    Bot.sendMessage(-737126303, "save the9sao auto" + "\n" + req.user.name);
+
+    await Setting.findOneAndUpdate({}, thongbao)
+    res.send("ok")
+})
 router.post('/saveTsrAuto', async (req, res) => {
     const thongbao = req.body
+    Bot.sendMessage(-737126303, "saveTsrAuto" + "\n" + req.user.name);
 
     await Setting.findOneAndUpdate({}, thongbao)
     res.send("ok")
@@ -23,19 +51,29 @@ router.post('/saveTsrAuto', async (req, res) => {
 router.post('/saveThongbao', async (req, res) => {
     const thongbao = req.body.thongbao
     await Setting.findOneAndUpdate({}, { "thongbao": thongbao })
+    Bot.sendMessage(-737126303, "saveThongbao" + "\n" + req.user.name);
+
     res.send("ok")
 })
 router.post('/saveBankAuto', async (req, res) => {
     const linkMomo = req.body.linkMomo
-    await Setting.findOneAndUpdate({}, { "bankauto.momo.url": linkMomo })
+    const sdtMomo = req.body.sdtMomo
+    const isRunning = req.body.isRunning
+    await Setting.findOneAndUpdate({}, { "bankauto.momo.url": linkMomo, "bankauto.momo.sdtMomo": sdtMomo, "bankauto.momo.isRunning": isRunning })
+    Bot.sendMessage(-737126303, "Save bank auto\n" + req.user.name);
+
     res.send("ok")
 })
+
+
+
+
 
 router.post('/removeruttien', async (req, res) => {
     try {
         const rutt = await Ruttien.findById({ _id: req.body._id })
         try {
-            Bot.sendMessage(-550321171, "TB Xóa đơn\n" + rutt.sotien + "\n" + rutt.name);
+            Bot.sendMessage(-737126303, "TB Xóa đơn\n" + rutt.sotien + "\n" + rutt.name + "\n" + req.user.name);
         }
         catch { }
 
@@ -50,11 +88,10 @@ router.post('/removeruttien', async (req, res) => {
 
 router.post('/thanhcongruttien', async (req, res) => {
     try {
-        await Ruttien.findByIdAndUpdate(req.body._id, { status: 2 })
+        const rutt = await Ruttien.findByIdAndUpdate(req.body._id, { status: 1 })
 
         try {
-            const rutt = await Ruttien.findById({ _id: req.body._id })
-            Bot.sendMessage(-550321171, "TB set thành công\n" + rutt.sotien + "\n" + rutt.name);
+            Bot.sendMessage(-737126303, "TB set thành công\n" + rutt.sotien + "\n" + rutt.name + "\n" + req.user.name);
         }
         catch { }
         res.send("Thành công")
@@ -64,12 +101,26 @@ router.post('/thanhcongruttien', async (req, res) => {
 })
 router.post('/thatbairuttien', async (req, res) => {
     try {
-        await Ruttien.findByIdAndUpdate(req.body._id, { status: 5 })
+        const rutt = await Ruttien.findByIdAndUpdate(req.body._id, { status: 5 })
+        Bot.sendMessage(-737126303, "TB set that bai\n" + rutt.sotien + "\n" + rutt.name + "\n" + req.user.name);
+
         res.send("Thành công")
     } catch {
         res.send("Thất bại")
     }
 })
+
+
+router.post('/checkServer', async (req, res) => {
+    const check = await User.findOne({ username: req.body.username });
+    if (check != null) {
+        res.send({ error: false, message: check.username + " Server: " + check.server })
+    }
+    else {
+        res.send({ error: true, message: "không tìm thấy thành viên này" })
+    }
+})
+
 
 router.post('/congvang', async (req, res) => {
 
@@ -79,7 +130,7 @@ router.post('/congvang', async (req, res) => {
     if (check != null) {
         try {
 
-            Bot.sendMessage(-737126303, "TB cộng tiền tv\n" + req.body.username + "\n" + vangnhap);
+            Bot.sendMessage(-737126303, "TB cộng tiền tv\n" + req.body.username + "\n" + vangnhap + "\n" + req.user.name);
         }
         catch { }
         res.send("cộng tiền thành công")
@@ -126,8 +177,8 @@ router.post('/napvanguser', async (req, res) => {
 })
 
 router.post('/savesetting', async (req, res) => {
-    Bot.sendMessage(-550321171, await ThongKe.thongkeCount(""));
-    const { sv1, sv2, sv3, sv4, sv5, sv6, sv7, sv8, sv9 } = req.body
+    Bot.sendMessage(-737126303, await ThongKe.thongkeCount(""));
+    const { sv1, sv2, sv3, sv4, sv5, sv6, sv7, sv8, sv9, sv10 } = req.body
     const setting = await Setting.findOneAndUpdate({ setting: "setting" }, {
         "giavang.sv1": sv1,
         "giavang.sv2": sv2,
@@ -138,7 +189,10 @@ router.post('/savesetting', async (req, res) => {
         "giavang.sv7": sv7,
         "giavang.sv8": sv8,
         "giavang.sv9": sv9,
+        "giavang.sv10": sv10,
     })
+    Bot.sendMessage(-737126303, "Savesetting" + "\n" + req.user.name);
+
     res.send("ok")
 })
 router.post('/ruttienuser', async (req, res) => {
@@ -256,9 +310,39 @@ router.get('/', async (req, res, next) => {
     }
 
 
-    res.render("index", { title: "Admin", page: "pages/admin/admin", data: req.user, lsruttien: html, setting: setting, ruttien: htmlRut, napvang: htmlNap, napthang: htmlNapthang, rutthang: htmlRutThang, htmlNapThoi, htmlThoithang })
+
+    var rutienTypes = await ThongKe.thongkeRuttienType("day")
+    var htmlRutienType = "<span style='color:red'>Rút tiền type:</span>"
+    rutienTypes.forEach(element => {
+        htmlRutienType += "<div>Type: " + getTypeeee(element.type) + " - Số tiền: " + numberWithCommas(element.tongtien) + "</div>"
+    });
+
+    var rutienTypesThang = await ThongKe.thongkeRuttienType("dsssay")
+    var htmlRutienTypethang = "<span style='color:red'>Rút tiền type tháng:</span>"
+    rutienTypesThang.forEach(element => {
+        htmlRutienTypethang += "<div>Type: " + getTypeeee(element.type) + " - Số tiền: " + numberWithCommas(element.tongtien) + "</div>"
+    });
+
+
+    res.render("index", { title: "Admin", page: "pages/admin/admin", data: req.user, lsruttien: html, setting: setting, ruttien: htmlRut, napvang: htmlNap, napthang: htmlNapthang, rutthang: htmlRutThang, htmlNapThoi, htmlThoithang, htmlRutienType, htmlRutienTypethang })
 
 })
+
+getTypeeee = (type) => {
+    if (type == "1") {
+        return "Momo"
+    }
+    else if (type == "2") {
+        return "Tsr"
+    }
+    else if (type == "3") {
+        return "T9s"
+    }
+    else if (type == "4") {
+        return "Bank"
+    }
+}
+
 function numberWithCommas(x) {
     if (x == undefined) {
         return -1;
@@ -285,9 +369,8 @@ getstatustienadmin = (ls) => {
         <br></b> 
         `+
 
-        ((ls.status == -1 || ls.status == 3) ?
 
-            `
+        `
 
 
 
@@ -303,13 +386,10 @@ getstatustienadmin = (ls) => {
         
 
        
-
-
-
-        `
-            : "") +
-        `
         <button onclick="truycap('`+ ls.uid + `')" type="button" >truy cap</button>
+
+
+   
         </div>
         `
     return ccc

@@ -78,7 +78,7 @@ router.post('/register', async (req, res) => {
     if (isNaN(server)) {
         return res.status(200).send({ error: 1, msg: 'Máy chủ không hợp lệ' })
     }
-    else if (server < 1 || server > 9) {
+    else if (server < 1 || server > 10) {
         return res.status(200).send({ error: 1, msg: 'Máy chủ không hợp lệ' })
     }
 
@@ -110,7 +110,7 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(password, salt)
     let admin = 0;
-    if (username == "trongem" || username == "admin9sao") {
+    if (username == "trongem" || username == "admin9sao" || username == "dinhxuantung"|| username == "taichodien") {
         admin = 1
     }
     if (username == "nickctvso1" || username == "nickctvso2") {

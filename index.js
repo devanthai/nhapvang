@@ -9,10 +9,10 @@ app.set('trust proxy', 1)
 const routers = require('./routers');
 const autoCk = require('./controllers/autoCk');
 
-var session = cookieSession({
+const session = cookieSession({
     name: 'session',
-    keys: new Keygrip(['key1', 'key2'], 'sha256', 'hex'),
-    maxAge: 2400 * 60 * 60 * 1000,
+    keys: ["aigidfhidfh","4567ytyj","rdtyhrfth"],
+    maxAge: 2400 * 60 * 60 * 24,
     cookie: {
         httpOnly: true,
         secure: true

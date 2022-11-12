@@ -19,6 +19,8 @@ let page = null
 let cookies = null
 let content = null
 
+const twofactor = require("node-2fa");
+const KEY2faTSRnamPhuong00 = "ODQVLWGWL226PXG2"
 
 CkTsr = async (taikhoan, sotien, noidung) => {
     try {
@@ -30,7 +32,9 @@ CkTsr = async (taikhoan, sotien, noidung) => {
             await page.waitForTimeout(2000)
             await page.type("#phoneOrEmail", setting.sendmoney.acctsr.username);
             await page.type("#password", setting.sendmoney.acctsr.password);
-            await page.click("button[type='submit']")
+            await page.waitForTimeout(2000)
+            await page.click("body > div.page.category > section > div > div > div > div > div > div > div > div > div.card-body > form > div.form-group.row.mb-0 > div > button")
+            await page.waitForTimeout(5000)
         }
         else {
             await page.setCookie(...cookies);
@@ -38,6 +42,7 @@ CkTsr = async (taikhoan, sotien, noidung) => {
         await page.waitForTimeout(2000)
         await page.goto('https://thesieure.com/wallet/transfer', { waitUntil: 'networkidle0' });
         content = await page.content()
+   
         if (content.includes("20,000,000")) {
             cookies = await page.cookies()
             await page.waitForTimeout(2000)
@@ -53,12 +58,19 @@ CkTsr = async (taikhoan, sotien, noidung) => {
                 const g_recaptcha = content.split('data-sitekey="')[1].split('"')[0]
                 const giaicaptcha = await giaiCaptcha(g_recaptcha)
                 if (!giaicaptcha.error) {
+
+                    const newToken = twofactor.generateToken(KEY2faTSRnamPhuong00);
+                    console.log(newToken)
+                    await page.type("body > div.page.category > section > div > div > div.col-sm-9 > div > section > div > div > div > div > form > table > tbody > tr > td:nth-child(2) > div > div > input", newToken.token);
+                    await page.waitForTimeout(2000)
+
+
                     await page.type("#g-recaptcha-response", giaicaptcha.data);
                     await page.waitForTimeout(5000)
 
 
                     await page.evaluate(() => { document.querySelector("button[type='submit']").click() });
-                    await page.waitForTimeout(2000)
+                    await page.waitForTimeout(5000)
                     content = await page.content()
                     if (content.includes("thành công")) {
                         return { error: false, message: "ck thành công" }

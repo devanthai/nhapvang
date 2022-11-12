@@ -6,7 +6,8 @@ const Ruttien = require('../models/Hisoutmoney')
 
 
 
-const Bot = require('../telegram/bot')
+const Bot = require('../telegram/bot');
+const { contents } = require('cheerio/lib/api/traversing');
 Ruttien.updateMany({ status: 3, type: "2" }, { status: -1 }, (data) => {
     console.log(data)
 })
@@ -16,57 +17,171 @@ Ruttien.updateMany({ status: 3, type: "4" }, { status: -1 }, (data) => {
     console.log(data)
 })
 
+Ruttien.updateMany({ status: 3, type: "3" }, { status: -1 }, (data) => {
+    console.log(data)
+})
 
 
 // start = async () => {
-    // setTimeout(() => {
+// setTimeout(() => {
 
-    //     start()
-    // }, 5000);
-    // var Settingz = await Setting.findOne({ setting: "setting" })
-    // if (Settingz.sendmoney.acctsr.isRunning) {
-    //     var rutTiens = await Ruttien.find({ status: -1, type: 2 })
-    //     rutTiens.forEach(async (item) => {
-    //         console.log("\x1b[33m", "Bắt đầu ck " + item.tknhantien)
-    //         item.status = 3
-    //         item.save()
-    //         var chuyentien = await CkTsr(item.tknhantien, item.sotien, "nhapvangtudong.com")
-    //         console.log(chuyentien)
-    //         if (!chuyentien.error) {
-    //             item.status = 2
-    //             item.save()
-    //             Bot.sendMessage(-550321171, "Chuyển tiền Thesieure thành công\nTime: " + chuyentien.time + "s" + "\nTk: " + item.tknhantien + " Số tiền: " + item.sotien);
-    //         }
-    //         else {
-    //             Bot.sendMessage(-550321171, "Chuyển tiền tsr thất bại \nTk: " + item.tknhantien + "\n" + chuyentien.message);
-    //             item.status = -1
-    //             item.save()
-    //         }
-    //     })
-    // }
+//     start()
+// }, 5000);
+// var Settingz = await Setting.findOne({ setting: "setting" })
+// if (Settingz.sendmoney.acctsr.isRunning) {
+//     var rutTiens = await Ruttien.find({ status: -1, type: 2 })
+//     rutTiens.forEach(async (item) => {
+//         console.log("\x1b[33m", "Bắt đầu ck " + item.tknhantien)
+//         item.status = 3
+//         item.save()
+//         var chuyentien = await CkTsr(item.tknhantien, item.sotien, "nhapvangtudong.com")
+//         console.log(chuyentien)
+//         if (!chuyentien.error) {
+//             item.status = 2
+//             item.save()
+//             Bot.sendMessage(-550321171, "Chuyển tiền Thesieure thành công\nTime: " + chuyentien.time + "s" + "\nTk: " + item.tknhantien + " Số tiền: " + item.sotien);
+//         }
+//         else {
+//             Bot.sendMessage(-550321171, "Chuyển tiền tsr thất bại \nTk: " + item.tknhantien + "\n" + chuyentien.message);
+//             item.status = -1
+//             item.save()
+//         }
+//     })
+// }
 // }
 // start()
 
-momoStart = async () => {
-    const setting = await Setting.findOne({})
-    setTimeout(() => {
-        momoStart()
-    }, 20000);
-    var rutien = await Ruttien.findOne({ status: -1, type: 1 })
-    if (rutien) {
-        request.get(setting.bankauto.momo.url + "&amount=" + rutien.sotien + "&phoneTarget=" + rutien.tknhantien + "&comment=Nhapvang&ahihi=11111", async function (error, response, body) {
-            if (!error) {
-                if (body == "thanhcong") {
-                    await Ruttien.findOneAndUpdate({ _id: rutien._id }, { status: 1 })
-                    Bot.sendMessage(-550321171, "Auto momo success " + rutien.tknhantien + " " + rutien.sotien);
-                }
-                else {
-                    Bot.sendMessage(-550321171, "Chuyen tien MOMO loi " + rutien.tknhantien + " " + rutien.sotien);
-                }
+
+const UrlApi = "https://the9sao.com/api/t9s"
+
+const TransFerApi = async (Username, Password, PasswordLever2, UsernameTo, AmountTransFer, Comment) => {
+    return new Promise(resolve => {
+        let options = {
+            'method': 'POST',
+            'url': UrlApi + "/Transfer",
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "Username": Username,
+                "Password": Password,
+                "PasswordLever2": PasswordLever2,
+                "UsernameTo": UsernameTo,
+                "AmountTransFer": AmountTransFer,
+                "Comment": Comment
+            })
+        };
+        request(options, async function (error, response, body) {
+            if (error) {
+                return resolve(null)
+            }
+            else if (response.statusCode == 200) {
+                return resolve(body)
+            }
+            else {
+                return resolve(null)
             }
         })
-    }
+    })
+}
 
+
+t9saoAuto = async () => {
+    let setting = await Setting.findOne({})
+    setTimeout(() => {
+        t9saoAuto()
+    }, 10000);
+    if (!setting.sendmoney.acct9s.isRunning) {
+        return
+    }
+    const rutien = await Ruttien.findOne({ status: -1, type: 3 })
+    if (rutien) {
+        const transfer = await TransFerApi(setting.sendmoney.acct9s.username, setting.sendmoney.acct9s.password, setting.sendmoney.acct9s.passwordLv2, rutien.tknhantien, rutien.sotien, "nhapvangnro.com")
+        if (transfer != null) {
+            const json = JSON.parse(transfer)
+            if (json.error == false) {
+                await Ruttien.findOneAndUpdate({ _id: rutien._id }, { status: 1 })
+                Bot.sendMessage(-550321171, "Auto the9sao success " + rutien.tknhantien + " " + rutien.sotien);
+            }
+            else
+            {
+                Bot.sendMessage(-550321171, "Chuyen tien the9sao loi " + rutien.tknhantien + " " + rutien.sotien + '\n' +  JSON.stringify(transfer));
+            }
+        }
+    }
+}
+
+t9saoAuto()
+
+
+getBalancePhone500kz = (phone) => {
+    return new Promise(async (resolve) => {
+        const options = {
+            url: 'http://momo.500kz.com/getBalance',
+            json: true,
+            body: {
+                phone: phone,
+            }
+        };
+        request.post(options, (error, res, body) => {
+            if (error) {
+                
+                return resolve({ error: true, message: "error request balance" })
+            }
+            else {
+                return resolve(body)
+            }
+        })
+    })
+}
+
+let momoErrorCount = 0
+
+momoStart = async () => {
+    let setting = await Setting.findOne({})
+    setTimeout(() => {
+        momoStart()
+    }, 30000);
+    if (!setting.bankauto.momo.isRunning) {
+        return
+    }
+    const rutien = await Ruttien.findOne({ status: -1, type: 1 })
+    if (rutien) {
+        const balanceFirt = await getBalancePhone500kz(setting.bankauto.momo.sdtMomo)
+        if (balanceFirt.error) {
+            // if (momoErrorCount > 3) {
+            //     setting.bankauto.momo.isRunning = false
+            //     setting.save()
+            //     Bot.sendMessage(-550321171, "Đã tắt auto momo");
+            //     return
+            // }
+            // momoErrorCount += 1
+
+            Bot.sendMessage(-550321171, "Chuyen tien MOMO loi " + rutien.tknhantien + " " + rutien.sotien + '\n' + JSON.stringify(balanceFirt));
+        }
+        else {
+            console.log("firt", balanceFirt.balance)
+            request.get(setting.bankauto.momo.url + "&amount=" + rutien.sotien + "&phoneTarget=" + rutien.tknhantien + "&comment=Nhapvang&ahihi=11111", async function (error, response, body) {
+                if (!error) {
+                    if (body == "thanhcong") {
+                        momoErrorCount = 0
+                        await Ruttien.findOneAndUpdate({ _id: rutien._id }, { status: 1 })
+                        Bot.sendMessage(-550321171, "Auto momo success " + rutien.tknhantien + " " + rutien.sotien);
+                    }
+                    else {
+                        // if (momoErrorCount > 3) {
+                        //     setting.bankauto.momo.isRunning = false
+                        //     setting.save()
+                        //     Bot.sendMessage(-550321171, "Đã tắt auto momo");
+                        //     return
+                        // }
+                        momoErrorCount += 1
+                        Bot.sendMessage(-550321171, "Chuyen tien MOMO loi " + rutien.tknhantien + " " + rutien.sotien + '\n' + body);
+                    }
+                }
+            })
+        }
+    }
 }
 momoStart()
 // function upp(taikhoan, sotien, noidung) {
@@ -439,4 +554,4 @@ ckAcb = (urlapi, username, password, accountNumber, tranfer_to, napasBankCode, a
         })
     })
 }
-module.exports = {  }
+module.exports = {}

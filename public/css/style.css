@@ -10,7 +10,7 @@
     font-size: 13.5px;
     background: #fff none repeat scroll 0 0;
     margin: auto;
-    max-width: 600px;
+    max-width: 900px;
     border: 1px solid #cdcdcd;
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -39,8 +39,8 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
   .rmenu {
-    background: #ffecc5;
-    border: 1px solid #fdb232;
+    background: #caebf9;
+    border: 1px solid #63c4ed;
     margin: 1px 0;
     padding: 4px;
   }
@@ -75,8 +75,9 @@
   }
   .logo {
     text-align: center;
-    background-image: url(../images/topbanner.png);
+    /* background-image: url(../images/topbanner.png); */
     height: 80px;
+    background-color: #2cafe79c;
   }
   .logo img {
     max-height: 40px;
@@ -84,7 +85,7 @@
   }
   .phdr {
     font-size: 15px;
-    background: #fe9400;
+    background: #2cafe7bd;
     line-height: 16px;
     color: #fff;
     display: block;
@@ -99,8 +100,8 @@
     color: #fe9400;
   }
   .end {
-    background: #fe9400;
-    border: 1px solid #fe9400;
+    background: #63c4ed;
+    border: 1px solid #63c4ed;
     margin-top: 1px;
     margin-bottom: 1px;
     padding: 10px;
@@ -132,7 +133,7 @@
     margin-top: 1px;
     margin-bottom: 1px;
     padding: 10px;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #63c4ed;
   }
   a.pagenav:hover {
     background-color: #f2f6f8;
@@ -496,7 +497,7 @@
     background-color: #4caf50;
   }
   .member {
-    background: #ffecc5;
+    background: #2cafe740;
     border: 1px solid #dee6de;
     margin: 1px 0;
     padding: 6px;

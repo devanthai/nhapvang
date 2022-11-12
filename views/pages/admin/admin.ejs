@@ -1,483 +1,579 @@
-<script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
-
-<style>
-    .thanhcong {
-        background-color: #00ff1f59;
-    }
-
-    .thatbai {
+<%if(data.isLogin && data.f2a){%>
 
 
+    <script src="https://cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
 
-        background-color: #ffc5c5;
-    }
+    <style>
+        .thanhcong {
+            background-color: #00ff1f59;
+        }
 
-    .waiting {
-        background-color: #ff990059;
-    }
-
-    .disabled {
-        position: relative;
-        color: grey;
-        background-color: #e5e5e5;
-    }
-</style>
-<button data-toggle="modal" data-target="#myModal">Sửa thông báo</button>
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="display: none;">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h4 class="modal-title">THÔNG BÁO</h4>
-            </div>
-            <div class="modal-body" id="editor">
+        .thatbai {
 
 
-                <%-setting.thongbao%>
+
+            background-color: #ffc5c5;
+        }
+
+        .waiting {
+            background-color: #ff990059;
+        }
+
+        .disabled {
+            position: relative;
+            color: grey;
+            background-color: #e5e5e5;
+        }
+    </style>
+    <button data-toggle="modal" data-target="#myModal">Sửa thông báo</button>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">THÔNG BÁO</h4>
+                </div>
+                <div class="modal-body" id="editor">
 
 
-            </div>
-            <button onclick="saveThongBao()">Save Thông báo</button>
-
-            <div class="modal-footer">
-                <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
-            </div>
-        </div>
-    </div>
-</div>
+                    <%-setting.thongbao%>
 
 
-<br>
+                </div>
+                <button onclick="saveThongBao()">Save Thông báo</button>
 
-
-<script>
-
-    CKEDITOR.replace('editor', {
-        height: 400,
-        baseFloatZIndex: 10005,
-        removeButtons: 'PasteFromWord'
-    });
-    saveThongBao = () => {
-        $.ajax({
-            url: '/hackerlo/saveThongbao',
-            type: "POST",
-            dataType: "text",
-            data: {
-                thongbao: CKEDITOR.instances['editor'].getData(),
-            },
-            success: function (res) {
-
-                alert(res)
-
-            }
-        });
-    }
-</script>
-
-<br>
-<hr style=" border-top: 1px solid red;">
-
-
-<center>TSR AUTO</center>
-
-Tk: <input style="width: 100%;" type="text" value="" id="usernametsr">
-Mk: <input style="width: 100%;" type="password" value="" id="passtsr">
-Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.isRunning%>" id="IsrunningTsr">
-<button onclick="saveTsrAuto()">lưu</button>
-<br>
-<br>
-
-<hr style=" border-top: 1px solid red;">
-<br>
-<center>BANK ACB AUTO</center>
-Link Api Acb: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.linkapi%>" id="linkapiacb">
-Username: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.username%>" id="usernameacb">
-accountNumber: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.accountNumber%>" id="accountNumberAcb">
-Password: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.accAcb.password%>" id="passacb">
-Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.isRunning%>" id="IsrunningAcb">
-<button onclick="saveAcbAuto()">lưu</button>
-
-<script>
-    saveAcbAuto = () => {
-        $.ajax({
-            url: '/hackerlo/saveTsrAuto',
-            type: "POST",
-            dataType: "text",
-            data: {
-                "sendmoney.accAcb.linkapi":$("#linkapiacb").val(),
-                "sendmoney.accAcb.username":$("#usernameacb").val(),
-                "sendmoney.accAcb.accountNumber":$("#accountNumberAcb").val(),
-                "sendmoney.accAcb.password":$("#passacb").val(),
-                "sendmoney.accAcb.isRunning":$("#IsrunningAcb").val(),
-            },
-            success: function (res) {
-                alert(res)
-            }
-        });
-    }
-</script>
-
-<br>
-<br>
-
-<hr style=" border-top: 1px solid red;">
-<br>
-<script>
-    saveTsrAuto = () => {
-        $.ajax({
-            url: '/hackerlo/saveTsrAuto',
-            type: "POST",
-            dataType: "text",
-            data: {
-                "sendmoney.acctsr.username":$("#usernametsr").val(),
-                "sendmoney.acctsr.password":$("#passtsr").val(),
-                "sendmoney.acctsr.isRunning":$("#IsrunningTsr").val(),
-            },
-            success: function (res) {
-                alert(res)
-            }
-        });
-    }
-</script>
-<br>
-
-
-<center>MOMO AUTO</center>
-<input style="width: 100%;" type="text" value="" id="linkMomo">
-<button onclick="saveBankAuto()">lưu</button>
-<br>
-<br>
-
-<hr style=" border-top: 1px solid red;">
-<br>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalck">
-    Chỉnh giá vàng
-</button>
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalcongtien">
-    Cộng vàng User
-</button>
-
-<button data-toggle="modal" data-target="#modalthongke">Thống kê</button>
-<br>
-Tên
-<input id="tnvtuycap" type="text">
-<button onclick="truycapname()">Truy cap</button>
-<script>
-    saveBankAuto = () => {
-        $.ajax({
-            url: '/hackerlo/saveBankAuto',
-            type: "POST",
-            dataType: "text",
-            data: {
-                linkMomo: $("#linkMomo").val(),
-            },
-            success: function (res) {
-
-                alert(res)
-
-            }
-        });
-    }
-    truycapname = () => {
-        $.ajax({
-            url: '/hackerlo/truycap',
-            type: "POST",
-            dataType: "text",
-            data: {
-                tnv: $("#tnvtuycap").val(),
-
-            },
-            success: function (res) {
-                // alert(res);
-                if (!res.includes("ko tim thay")) {
-                    location.href = "/hackerlo/truycap?id=" + res
-                }
-                else {
-                    alert(res)
-                }
-            }
-        });
-    }
-</script>
-
-<div class="modal fade" id="modalthongke" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Thống kê</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="" class="modal-body">
-
-                <%-ruttien%>
-                    <br>
-                    <%-rutthang%>
-                        <br>
-
-                        <%-napvang%>
-
-                            <br>
-                            <%-napthang%>
-                                <br>
-
-                                <%-htmlNapThoi%>
-                                    <br>
-
-                                    <%-htmlThoithang%>
-
-            </div>
-            <div class="modal-footer">
-
-
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
+                <div class="modal-footer">
+                    <button type="button" class="btns btns-warning" data-dismiss="modal">ĐÓNG</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Modal -->
-<div class="modal fade" id="modalck" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Giá vàng</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="viewck" class="modal-body">
-                <span>Sv1: </span> <input id="cksv1" value="<%-setting.giavang.sv1%>" type="number">
-                <br>
-                <span>Sv2: </span> <input id="cksv2" value="<%-setting.giavang.sv2%>" type="number"> <br>
-                <span>Sv3: </span> <input id="cksv3" value="<%-setting.giavang.sv3%>" type="number"> <br>
-                <span>Sv4: </span> <input id="cksv4" value="<%-setting.giavang.sv4%>" type="number"> <br>
-                <span>Sv5: </span> <input id="cksv5" value="<%-setting.giavang.sv5%>" type="number"> <br>
-                <span>Sv6: </span> <input id="cksv6" value="<%-setting.giavang.sv6%>" type="number"> <br>
-                <span>Sv7: </span> <input id="cksv7" value="<%-setting.giavang.sv7%>" type="number"> <br>
-                <span>Sv8: </span> <input id="cksv8" value="<%-setting.giavang.sv8%>" type="number"> <br>
-                <span>Sv9: </span> <input id="cksv9" value="<%-setting.giavang.sv9%>" type="number">
-            </div>
-            <div class="modal-footer">
-                <button type="button" onclick="save()" class="btn btn-secondary" data-dismiss="modal">Lưu lại</button>
-
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-            </div>
-        </div>
-    </div>
-</div>
 
 
-<!-- Modal -->
-<div class="modal fade" id="modalcongtien" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Cộng vàng thành viên</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="viewck" class="modal-body">
-                <span>Tài khoản: </span> <input id="usernameup" type="text">
-                <br>
-                <span>Số vàng: </span> <input id="goldup" type="text">
-                <br>
-                <button onclick="congvang()" type="button" class="btn btn-primary">
-                    Cộng ngay
-                </button>
+    <br>
 
-            </div>
-            <div class="modal-footer">
-
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">History</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="viewls" class="modal-body">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<%-lsruttien%>
 
     <script>
-        $("#goldup").on("keyup", function (event) {
 
-            var selection = window.getSelection().toString();
-            if (selection !== '') {
-                return;
-            }
-            if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
-                return;
-            }
-            var $this = $(this);
-            var input = $this.val();
-            var input = input.replace(/[\D\s\._\-]+/g, "");
-            input = input ? parseInt(input, 10) : 0;
-            $this.val(function () {
-                return (input === 0) ? "" : input.toLocaleString("en-US");
-            });
+        CKEDITOR.replace('editor', {
+            height: 400,
+            baseFloatZIndex: 10005,
+            removeButtons: 'PasteFromWord'
         });
-        congvang = () => {
-            if (!confirm("Bạn có muốn ấn ok không?")) {
-                return
-            }
-
+        saveThongBao = () => {
             $.ajax({
-                url: '/hackerlo/congvang',
+                url: '/hackerlo/saveThongbao',
                 type: "POST",
                 dataType: "text",
                 data: {
-                    username: $("#usernameup").val(),
-                    gold: $("#goldup").val()
-
+                    thongbao: CKEDITOR.instances['editor'].getData(),
                 },
                 success: function (res) {
-                    alert(res);
 
-                    if (res.includes("thành công")) {
-                        $("#modalcongtien").modal("hide")
-                    }
+                    alert(res)
 
                 }
             });
-        }
-        function save() {
-
-            $.ajax({
-                url: '/hackerlo/savesetting',
-                type: "POST",
-                dataType: "text",
-                data: {
-                    sv1: $("#cksv1").val(),
-                    sv2: $("#cksv2").val(),
-                    sv3: $("#cksv3").val(),
-                    sv4: $("#cksv4").val(),
-                    sv5: $("#cksv5").val(),
-                    sv6: $("#cksv6").val(),
-                    sv7: $("#cksv7").val(),
-                    sv8: $("#cksv8").val(),
-                    sv9: $("#cksv9").val(),
-
-                },
-                success: function (res) {
-                    alert(res);
-
-                }
-            });
-        }
-        function xoa(_id) {
-            if (!confirm("Bạn có muốn XÓA không?")) {
-                return
-            }
-            $.ajax({
-                url: '/hackerlo/removeruttien',
-                type: "POST",
-                dataType: "text",
-                data: { '_id': _id },
-                success: function (res) {
-                    alert(res);
-                    location.reload();
-                }
-            });
-        }
-        function thanhcong(_id) {
-            if (!confirm("Bạn có chắc?")) {
-                return
-            }
-            $.ajax({
-                url: '/hackerlo/thanhcongruttien',
-                type: "POST",
-                dataType: "text",
-                data: { '_id': _id },
-                success: function (res) {
-                    alert(res);
-                    location.reload();
-                }
-            });
-        }
-        function thatbai(_id) {
-            if (!confirm("Bạn có chắc?")) {
-                return
-            }
-            $.ajax({
-                url: '/hackerlo/thatbairuttien',
-                type: "POST",
-                dataType: "text",
-                data: { '_id': _id },
-                success: function (res) {
-                    alert(res);
-                    location.reload();
-                }
-            });
-        }
-        function napthoi(uid) {
-            $("#exampleModalCenter").modal()
-            $.ajax({
-                url: '/hackerlo/napthoiuser',
-                type: "POST",
-                dataType: "text",
-                data: { 'uid': uid },
-                success: function (res) {
-                    $("#viewls").html(res)
-                }
-            });
-        }
-        function napvang(uid) {
-            $("#exampleModalCenter").modal()
-            $.ajax({
-                url: '/hackerlo/napvanguser',
-                type: "POST",
-                dataType: "text",
-                data: { 'uid': uid },
-                success: function (res) {
-
-                    $("#viewls").html(res)
-                }
-            });
-        }
-        function ruttien(uid) {
-            $("#exampleModalCenter").modal()
-            $.ajax({
-                url: '/hackerlo/ruttienuser',
-                type: "POST",
-                dataType: "text",
-                data: { 'uid': uid },
-                success: function (res) {
-
-                    $("#viewls").html(res)
-                }
-            });
-        }
-        function truycap(uid) {
-            location.href = "/hackerlo/truycap?id=" + uid
         }
     </script>
+
+    <br>
+    <hr style=" border-top: 1px solid red;">
+
+    <center>The9sao AUTO</center>
+
+    Tk: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acct9s.username%>" id="usernamet9s">
+    Mk: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acct9s.password%>" id="passt9s">
+    Mk lever2: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acct9s.passwordLv2%>"
+        id="passt9sLv2">
+    Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acct9s.isRunning%>"
+        id="IsrunningT9s">
+    <button onclick="saveThe9sao9sao()">lưu</button>
+
+    <script>
+        saveThe9sao9sao = () => {
+            $.ajax({
+                url: '/hackerlo/saveT9sAuto',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    "sendmoney.acct9s.username": $("#usernamet9s").val(),
+                    "sendmoney.acct9s.password": $("#passt9s").val(),
+                    "sendmoney.acct9s.passwordLv2": $("#passt9sLv2").val(),
+                    "sendmoney.acct9s.isRunning": $("#IsrunningT9s").val(),
+                },
+                success: function (res) {
+                    alert(res)
+                }
+            });
+        }
+    </script>
+
+    <br>
+    <br>
+    <center>TSR AUTO</center>
+
+    Tk: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.username%>" id="usernametsr">
+    Mk: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.acctsr.password%>" id="passtsr">
+    Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.acctsr.isRunning%>"
+        id="IsrunningTsr">
+    <button onclick="saveTsrAuto()">lưu</button>
+
+
+
+    <br>
+    <br>
+
+
+
+
+    <hr style=" border-top: 1px solid red;">
+    <br>
+    <center>BANK ACB AUTO</center>
+    Link Api Acb: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.linkapi%>" id="linkapiacb">
+    Username: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.username%>" id="usernameacb">
+    accountNumber: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.accountNumber%>"
+        id="accountNumberAcb">
+    Password: <input style="width: 100%;" type="password" value="<%-setting.sendmoney.accAcb.password%>" id="passacb">
+    Isrunning: <input style="width: 100%;" type="text" value="<%-setting.sendmoney.accAcb.isRunning%>"
+        id="IsrunningAcb">
+    <button onclick="saveAcbAuto()">lưu</button>
+
+    <script>
+        saveAcbAuto = () => {
+            $.ajax({
+                url: '/hackerlo/saveTsrAuto',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    "sendmoney.accAcb.linkapi": $("#linkapiacb").val(),
+                    "sendmoney.accAcb.username": $("#usernameacb").val(),
+                    "sendmoney.accAcb.accountNumber": $("#accountNumberAcb").val(),
+                    "sendmoney.accAcb.password": $("#passacb").val(),
+                    "sendmoney.accAcb.isRunning": $("#IsrunningAcb").val(),
+                },
+                success: function (res) {
+                    alert(res)
+                }
+            });
+        }
+    </script>
+
+    <br>
+    <br>
+
+    <hr style=" border-top: 1px solid red;">
+    <br>
+    <script>
+        saveTsrAuto = () => {
+            $.ajax({
+                url: '/hackerlo/saveTsrAuto',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    "sendmoney.acctsr.username": $("#usernametsr").val(),
+                    "sendmoney.acctsr.password": $("#passtsr").val(),
+                    "sendmoney.acctsr.isRunning": $("#IsrunningTsr").val(),
+                },
+                success: function (res) {
+                    alert(res)
+                }
+            });
+        }
+    </script>
+    <br>
+
+
+    <center>MOMO AUTO</center>
+    <input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.url%>" id="linkMomo">
+    <input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.sdtMomo%>" id="sdtMomo">
+    Isrunning: <input style="width: 100%;" type="text" value="<%-setting.bankauto.momo.isRunning%>" id="IsrunningMomo">
+
+    <button onclick="saveBankAuto()">lưu</button>
+    <br>
+    <br>
+
+    <hr style=" border-top: 1px solid red;">
+    <br>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalck">
+        Chỉnh giá vàng
+    </button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalcongtien">
+        Cộng vàng User
+    </button>
+
+    <button data-toggle="modal" data-target="#modalthongke">Thống kê</button>
+    <br>
+    Tên
+    <input id="tnvtuycap" type="text">
+    <button onclick="truycapname()">Truy cap</button>
+    <script>
+        saveBankAuto = () => {
+            $.ajax({
+                url: '/hackerlo/saveBankAuto',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    linkMomo: $("#linkMomo").val(),
+                    sdtMomo: $("#sdtMomo").val(),
+                    isRunning: $("#IsrunningMomo").val(),
+                },
+                success: function (res) {
+
+                    alert(res)
+
+                }
+            });
+        }
+        truycapname = () => {
+            $.ajax({
+                url: '/hackerlo/truycap',
+                type: "POST",
+                dataType: "text",
+                data: {
+                    tnv: $("#tnvtuycap").val(),
+
+                },
+                success: function (res) {
+                    // alert(res);
+                    if (!res.includes("ko tim thay")) {
+                        location.href = "/hackerlo/truycap?id=" + res
+                    }
+                    else {
+                        alert(res)
+                    }
+                }
+            });
+        }
+    </script>
+
+    <div class="modal fade" id="modalthongke" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Thống kê</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="" class="modal-body">
+
+                    <%-ruttien%>
+                        <br>
+                        <%-rutthang%>
+                            <br>
+
+                            <%-napvang%>
+
+                                <br>
+                                <%-napthang%>
+                                    <br>
+
+                                    <%-htmlNapThoi%>
+                                        <br>
+
+                                        <%-htmlThoithang%>
+                                            <br>
+                                            <%-htmlRutienType%>
+                                                <br>
+                                                <%-htmlRutienTypethang%>
+
+
+
+                </div>
+                <div class="modal-footer">
+
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalck" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Giá vàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="viewck" class="modal-body">
+                    <span>Sv1: </span> <input id="cksv1" value="<%-setting.giavang.sv1%>" type="number">
+                    <br>
+                    <span>Sv2: </span> <input id="cksv2" value="<%-setting.giavang.sv2%>" type="number"> <br>
+                    <span>Sv3: </span> <input id="cksv3" value="<%-setting.giavang.sv3%>" type="number"> <br>
+                    <span>Sv4: </span> <input id="cksv4" value="<%-setting.giavang.sv4%>" type="number"> <br>
+                    <span>Sv5: </span> <input id="cksv5" value="<%-setting.giavang.sv5%>" type="number"> <br>
+                    <span>Sv6: </span> <input id="cksv6" value="<%-setting.giavang.sv6%>" type="number"> <br>
+                    <span>Sv7: </span> <input id="cksv7" value="<%-setting.giavang.sv7%>" type="number"> <br>
+                    <span>Sv8: </span> <input id="cksv8" value="<%-setting.giavang.sv8%>" type="number"> <br>
+                    <span>Sv9: </span> <input id="cksv9" value="<%-setting.giavang.sv9%>" type="number"> <br>
+                    <span>Sv10: </span> <input id="cksv10" value="<%-setting.giavang.sv10%>" type="number">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="save()" class="btn btn-secondary" data-dismiss="modal">Lưu
+                        lại</button>
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalcongtien" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Cộng vàng thành viên</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="viewck" class="modal-body">
+                    <span>Tài khoản: </span> <input id="usernameup" type="text">
+                    <br>
+                    <span>Số vàng: </span> <input id="goldup" type="text">
+                    <br>
+                    <button onclick="congvang()" type="button" class="btn btn-primary">
+                        Cộng ngay
+                    </button>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">History</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="viewls" class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-lsruttien%>
+
+        <script>
+            $("#goldup").on("keyup", function (event) {
+
+                var selection = window.getSelection().toString();
+                if (selection !== '') {
+                    return;
+                }
+                if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) {
+                    return;
+                }
+                var $this = $(this);
+                var input = $this.val();
+                var input = input.replace(/[\D\s\._\-]+/g, "");
+                input = input ? parseInt(input, 10) : 0;
+                $this.val(function () {
+                    return (input === 0) ? "" : input.toLocaleString("en-US");
+                });
+            });
+            congvang = () => {
+                $.ajax({
+                    url: '/hackerlo/checkServer',
+                    type: "POST",
+                    dataType: "text",
+                    data: {
+                        username: $("#usernameup").val()
+                    },
+                    success: function (res) {
+                        const json = JSON.parse(res)
+                        alert(json.message);
+                        if (json.error == true) {
+                            return
+                        }
+                        if (!confirm("Bạn có muốn cộng vàng cho "+json.message+" không?")) {
+                            return
+                        }
+                        $.ajax({
+                            url: '/hackerlo/congvang',
+                            type: "POST",
+                            dataType: "text",
+                            data: {
+                                username: $("#usernameup").val(),
+                                gold: $("#goldup").val()
+
+                            },
+                            success: function (res) {
+                                alert(res);
+
+                                if (res.includes("thành công")) {
+                                    $("#modalcongtien").modal("hide")
+                                }
+
+                            }
+                        });
+                    }
+                });
+
+            }
+            function save() {
+
+                $.ajax({
+                    url: '/hackerlo/savesetting',
+                    type: "POST",
+                    dataType: "text",
+                    data: {
+                        sv1: $("#cksv1").val(),
+                        sv2: $("#cksv2").val(),
+                        sv3: $("#cksv3").val(),
+                        sv4: $("#cksv4").val(),
+                        sv5: $("#cksv5").val(),
+                        sv6: $("#cksv6").val(),
+                        sv7: $("#cksv7").val(),
+                        sv8: $("#cksv8").val(),
+                        sv9: $("#cksv9").val(),
+                        sv10: $("#cksv10").val(),
+
+                    },
+                    success: function (res) {
+                        alert(res);
+
+                    }
+                });
+            }
+            function xoa(_id) {
+                if (!confirm("Bạn có muốn XÓA không?")) {
+                    return
+                }
+                $.ajax({
+                    url: '/hackerlo/removeruttien',
+                    type: "POST",
+                    dataType: "text",
+                    data: { '_id': _id },
+                    success: function (res) {
+                        alert(res);
+                        location.reload();
+                    }
+                });
+            }
+            function thanhcong(_id) {
+                if (!confirm("Bạn có chắc?")) {
+                    return
+                }
+                $.ajax({
+                    url: '/hackerlo/thanhcongruttien',
+                    type: "POST",
+                    dataType: "text",
+                    data: { '_id': _id },
+                    success: function (res) {
+                        alert(res);
+                        location.reload();
+                    }
+                });
+            }
+            function thatbai(_id) {
+                if (!confirm("Bạn có chắc?")) {
+                    return
+                }
+                $.ajax({
+                    url: '/hackerlo/thatbairuttien',
+                    type: "POST",
+                    dataType: "text",
+                    data: { '_id': _id },
+                    success: function (res) {
+                        alert(res);
+                        location.reload();
+                    }
+                });
+            }
+            function napthoi(uid) {
+                $("#exampleModalCenter").modal()
+                $.ajax({
+                    url: '/hackerlo/napthoiuser',
+                    type: "POST",
+                    dataType: "text",
+                    data: { 'uid': uid },
+                    success: function (res) {
+                        $("#viewls").html(res)
+                    }
+                });
+            }
+            function napvang(uid) {
+                $("#exampleModalCenter").modal()
+                $.ajax({
+                    url: '/hackerlo/napvanguser',
+                    type: "POST",
+                    dataType: "text",
+                    data: { 'uid': uid },
+                    success: function (res) {
+
+                        $("#viewls").html(res)
+                    }
+                });
+            }
+            function ruttien(uid) {
+                $("#exampleModalCenter").modal()
+                $.ajax({
+                    url: '/hackerlo/ruttienuser',
+                    type: "POST",
+                    dataType: "text",
+                    data: { 'uid': uid },
+                    success: function (res) {
+
+                        $("#viewls").html(res)
+                    }
+                });
+            }
+            function truycap(uid) {
+                location.href = "/hackerlo/truycap?id=" + uid
+            }
+        </script>
+
+        <%}else{%>
+
+            <input type="text" id="code">
+            <button onclick="veri2fa()">Ok</button>
+            <script>
+                veri2fa = () => {
+                    $.ajax({
+                        url: '/hackerlo/2fa',
+                        type: "POST",
+                        dataType: "text",
+                        data: {
+                            code: $("#code").val(),
+                        },
+                        success: function (res) {
+                            if (!res.error) {
+                                location.reload();
+                            }
+
+
+                        }
+                    });
+                }
+            </script>
+            <%}%>

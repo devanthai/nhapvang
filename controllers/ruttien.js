@@ -178,6 +178,10 @@ router.post('/', async (req, res) => {
         var needgold = 10000 * giavang
         return res.send({ err: 1, message: "Chỉ rút được trên " + numberWithCommas(needgold) + " vàng" })
     }
+    if (sotien < 100000 && type == 4) {
+        var needgold = 100000 * giavang
+        return res.send({ err: 1, message: "Bank chỉ được rút trên 100k vnđ số vàng cần là: " + numberWithCommas(needgold) + " vàng hoặc rút cổng khác" })
+    }
     var user = await User.findById(req.user._id)
     if (user) {
         if (user.vang < vangreal) {
